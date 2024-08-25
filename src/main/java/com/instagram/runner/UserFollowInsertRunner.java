@@ -90,19 +90,19 @@ public class UserFollowInsertRunner implements ApplicationRunner {
         user2.setEmail("test2@a.com");
         user2.setPassword("0000");
 
-        userRepository.saveAll(List.of(user1, user2));
+        //userRepository.saveAll(List.of(user1, user2));
 
         Follow follow1 = new Follow();
         follow1.setFollowerId(user1);
         follow1.setFollowingId(user2);
 
-        followRepository.saveAll(List.of(follow1));
+        //followRepository.saveAll(List.of(follow1));
 
         Photo photo1 = new Photo();
         photo1.setUserId(user1);
         photo1.setCaption("amy's photo");
         photo1.setImageUrl("amy_photo.png");
 
-        photoRepository.saveAll(List.of(photo1));
+        //photoRepository.saveAll(List.of(photo1));
     }
 }

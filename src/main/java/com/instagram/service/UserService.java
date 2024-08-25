@@ -29,6 +29,7 @@ package com.instagram.service;
 import com.instagram.dto.FollowDto;
 import com.instagram.dto.PhotoDto;
 import com.instagram.dto.UserDto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -46,5 +47,5 @@ public interface UserService {
 
     List<PhotoDto> getPhotoByUserId(Long userId);
 
-    UserDto updateUser(Long userId, UserDto updatedUser);
+    UserDto updateUser(Long userId, UserDto updatedUser, MultipartFile file);
 }

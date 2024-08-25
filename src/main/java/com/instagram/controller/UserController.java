@@ -8,6 +8,7 @@ import com.instagram.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -56,8 +57,9 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId,
-                                              @RequestBody UserDto updatedUser){
-        UserDto userDto = userService.updateUser(userId, updatedUser);
+                                              @RequestParam("user") UserDto updatedUser,
+                                              @RequestParam("file")MultipartFile file){
+        UserDto userDto = userService.updateUser(userId, updatedUser, file);
         return ResponseEntity.ok(userDto);
     }
 
