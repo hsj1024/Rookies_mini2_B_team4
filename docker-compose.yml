@@ -231,7 +231,7 @@ services:
       retries: 5
 
   springboot:
-    image: your_dockerhub_username/rookies_talk_app:latest  # Docker Hub에서 이미지를 가져옵니다.
+    image: hsj1024/rookies_talk_app:latest  # Docker Hub에서 이미지 get
     ports:
       - "8080:8080"
     environment:
