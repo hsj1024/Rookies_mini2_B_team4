@@ -7,12 +7,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="merged_project" />
+        <module name="rookies_talk" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="instgram" target="17" />
-      <module name="rookies_talk" target="17" />
+      <module name="merged_project" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

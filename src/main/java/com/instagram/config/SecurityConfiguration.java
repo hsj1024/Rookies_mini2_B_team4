@@ -15,42 +15,42 @@
 //@EnableWebSecurity
 //public class SecurityConfiguration {
 //
-//	@Autowired
-//	private JwtRequestFilter jwtRequestFilter;
+//   @Autowired
+//   private JwtRequestFilter jwtRequestFilter;
 //
-//	@Autowired
-//	private CustomAuthenticationSuccessHandler successHandler;
+//   @Autowired
+//   private CustomAuthenticationSuccessHandler successHandler;
 //
-//	@Bean
-//	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//		http
-//				.authorizeHttpRequests((auth) -> auth
-//						.requestMatchers("/", "/login", "/home", "/join", "/joinProc", "/api/loginProc", "/favicon.ico").permitAll()
-//						.requestMatchers("/admin").hasRole("ADMIN")
-//						.requestMatchers("/board/**", "/api/**").hasAnyRole("ADMIN", "USER")
-//						.anyRequest().authenticated()
-//				)
-//				.formLogin((auth) -> auth
-//						.loginProcessingUrl("/api/loginProc")
-//						.permitAll()
-//						.successHandler(successHandler)
-//				)
-//				.csrf((auth) -> auth.disable())  // CSRF를 필요 시 활성화
-//				.logout((auth) -> auth
-//						.logoutUrl("/logout")
-//						.logoutSuccessUrl("/")
-//						.invalidateHttpSession(true)
-//						.deleteCookies("JSESSIONID")  // 로그아웃 시 세션과 쿠키 제거
-//				)
-//				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//   @Bean
+//   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//      http
+//            .authorizeHttpRequests((auth) -> auth
+//                  .requestMatchers("/", "/login", "/home", "/join", "/joinProc", "/api/loginProc", "/favicon.ico").permitAll()
+//                  .requestMatchers("/admin").hasRole("ADMIN")
+//                  .requestMatchers("/board/**", "/api/**").hasAnyRole("ADMIN", "USER")
+//                  .anyRequest().authenticated()
+//            )
+//            .formLogin((auth) -> auth
+//                  .loginProcessingUrl("/api/loginProc")
+//                  .permitAll()
+//                  .successHandler(successHandler)
+//            )
+//            .csrf((auth) -> auth.disable())  // CSRF를 필요 시 활성화
+//            .logout((auth) -> auth
+//                  .logoutUrl("/logout")
+//                  .logoutSuccessUrl("/")
+//                  .invalidateHttpSession(true)
+//                  .deleteCookies("JSESSIONID")  // 로그아웃 시 세션과 쿠키 제거
+//            )
+//            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 //
-//		return http.build();
-//	}
+//      return http.build();
+//   }
 //
-//	@Bean
-//	BCryptPasswordEncoder bCryptPasswordEncoder() {
-//		return new BCryptPasswordEncoder();
-//	}
+//   @Bean
+//   BCryptPasswordEncoder bCryptPasswordEncoder() {
+//      return new BCryptPasswordEncoder();
+//   }
 //
 //
 //}
@@ -87,7 +87,7 @@ public class SecurityConfiguration {
 		http
 				.cors(cors -> cors.configurationSource(corsConfigurationSource)) // 새로운 방식으로 CORS 설정
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/login", "/home", "/join", "/joinProc", "/api/loginProc", "/favicon.ico").permitAll()
+						.requestMatchers("/", "/login", "/home","/api/main", "/join", "/joinProc", "/api/loginProc", "/favicon.ico").permitAll()
 						.requestMatchers("/admin").hasRole("ADMIN")
 						.requestMatchers("/board/**", "/api/**").hasAnyRole("ADMIN", "USER")
 						.anyRequest().authenticated()

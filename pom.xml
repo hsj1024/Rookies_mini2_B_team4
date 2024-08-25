@@ -8,11 +8,11 @@
 		<version>3.3.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.merged_project</groupId>
-	<artifactId>merged_project</artifactId>
+	<groupId>com.rookies_talk</groupId>
+	<artifactId>rookies_talk</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>merged_project</name>
-	<description>Merged project for Spring Boot</description>
+	<name>rookies_talk</name>
+	<description>rookies_talk project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
 		<spring-boot-admin.version>3.3.2</spring-boot-admin.version>

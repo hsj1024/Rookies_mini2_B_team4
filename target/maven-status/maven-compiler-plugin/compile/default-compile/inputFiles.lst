@@ -1,6 +1,7 @@
 /Users/seojeong/Documents/GitHub/Rookies_mini2_B_team4/MiniPjt2/src/main/java/com/instagram/InstgramApplication.java
 /Users/seojeong/Documents/GitHub/Rookies_mini2_B_team4/MiniPjt2/src/main/java/com/instagram/common/JwtUtils.java
 /Users/seojeong/Documents/GitHub/Rookies_mini2_B_team4/MiniPjt2/src/main/java/com/instagram/config/CorsConfig.java
+/Users/seojeong/Documents/GitHub/Rookies_mini2_B_team4/MiniPjt2/src/main/java/com/instagram/config/JwtConfig.java
 /Users/seojeong/Documents/GitHub/Rookies_mini2_B_team4/MiniPjt2/src/main/java/com/instagram/config/SecurityConfiguration.java
 /Users/seojeong/Documents/GitHub/Rookies_mini2_B_team4/MiniPjt2/src/main/java/com/instagram/config/WebSocketConfig.java
 /Users/seojeong/Documents/GitHub/Rookies_mini2_B_team4/MiniPjt2/src/main/java/com/instagram/controller/ChatController.java
