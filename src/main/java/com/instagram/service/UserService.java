@@ -26,34 +26,25 @@
 //}
 package com.instagram.service;
 
-import com.instagram.entity.User;
-import com.instagram.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import com.instagram.dto.FollowDto;
+import com.instagram.dto.PhotoDto;
+import com.instagram.dto.UserDto;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 
-@Service
-public class UserService {
+public interface UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    UserDto getUserById(Long id);
 
-    public Set<User> findUsersByIds(Set<Long> userIds) {
-        return new HashSet<>(userRepository.findAllById(userIds));
-    }
-    public User createUser(User user) {
-            return userRepository.save(user);
-    }
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
+    List<FollowDto> getFollower(Long userid);
 
-    // 사용자 ID로 사용자를 조회하는 메서드 추가
-    public User findUserById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElseThrow(() -> new RuntimeException("User not found with ID " + id));
-    }
+    List<FollowDto> getFollowing(Long userid);
+
+    Long getFollowerNum(Long userId);
+
+    Long getFollowingNum(Long userId);
+
+    List<PhotoDto> getPhotoByUserId(Long userId);
+
+    UserDto updateUser(Long userId, UserDto updatedUser);
 }

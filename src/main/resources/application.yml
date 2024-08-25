@@ -1,0 +1,73 @@
+#spring:
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    consumer:
+#      group-id: chat-group
+#      auto-offset-reset: earliest
+#    producer:
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+#
+#  datasource:
+#    url: jdbc:mariadb://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_DATABASE:boot_db}
+#    username: ${DB_USERNAME:boot}
+#    password: ${DB_PASSWORD:boot}
+#    driver-class-name: org.mariadb.jdbc.Driver
+#
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MariaDBDialect
+#        default_batch_fetch_size: 100
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#
+##spring:
+##  datasource:
+##    url: jdbc:mariadb://mariadb:3306/boot_db
+##    username: boot
+##    password: boot
+##    driver-class-name: org.mariadb.jdbc.Driver
+##
+##  jpa:
+##    properties:
+##      hibernate:
+##        dialect: org.hibernate.dialect.MariaDBDialect
+##        default_batch_fetch_size: 100
+##    hibernate:
+##      ddl-auto: update
+##    show-sql: true
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: chat-group
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+  datasource:
+    url: jdbc:mariadb://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_DATABASE:boot_db}
+    username: boot  # root 사용자로 접속
+    password: boot  # 새로 설정한 root 사용자 비밀번호
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect
+        default_batch_fetch_size: 100
+        format_sql: true  # format_sql을 기존 properties 아래로 병합
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  spring:
+    flyway:
+      user: boot
+      password: boot
+      baseline-on-migrate: false
+

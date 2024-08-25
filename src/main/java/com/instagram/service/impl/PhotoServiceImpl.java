@@ -3,8 +3,10 @@ package com.instagram.service.impl;
 import com.instagram.dto.PhotoDto;
 import com.instagram.entity.Main;
 import com.instagram.entity.Photo;
+import com.instagram.entity.User;
 import com.instagram.repository.MainRepository;
 import com.instagram.repository.PhotoRepository;
+import com.instagram.repository.UserRepository;
 import com.instagram.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,8 @@ public class PhotoServiceImpl implements PhotoService {
     @Autowired
     private MainRepository mainRepository;
 
+    @Autowired
+    private UserRepository userRepository; // UserRepository
     private final String uploadDir = "uploads/"; // 파일을 임시로 저장할 디렉토리 경로
 
     @Override
@@ -38,7 +42,14 @@ public class PhotoServiceImpl implements PhotoService {
 
             // Photo 엔티티 생성 및 저장
             Photo photo = new Photo();
-            photo.setUserId(userId);
+//            photo.setUserId(userId);
+//            photo.setImageUrl(filePath.toString());
+//            photo.setCaption(caption);
+            // User 찾기
+            User user = userRepository.findByUserId(userId)
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+            photo.setUserId(user);
+
             photo.setImageUrl(filePath.toString());
             photo.setCaption(caption);
 
@@ -59,7 +70,8 @@ public class PhotoServiceImpl implements PhotoService {
     private PhotoDto toDto(Photo photo) {
         PhotoDto dto = new PhotoDto();
         dto.setId(photo.getId());
-        dto.setUserId(photo.getUserId());
+//        dto.setUserId(photo.getUserId());
+        dto.setUserId(photo.getUserId().getId().toString());
         dto.setImageUrl(photo.getImageUrl());
         dto.setCaption(photo.getCaption());
         dto.setCreatedAt(photo.getCreatedAt());

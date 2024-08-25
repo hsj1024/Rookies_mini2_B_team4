@@ -99,6 +99,7 @@ import com.instagram.entity.ChatRoom;
 import com.instagram.entity.User;
 import com.instagram.service.ChatService;
 import com.instagram.service.UserService;
+import com.instagram.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -106,6 +107,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -115,11 +117,17 @@ public class ChatController {
     private ChatService chatService;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @PostMapping("/room")
     public ChatRoom createRoom(@RequestBody CreateChatRoomRequest request) {
-        Set<User> users = userService.findUsersByIds(request.getUsers());
+        // Set<Long>을 Set<String>으로 변환
+        Set<String> userIds = request.getUsers().stream()
+                .map(String::valueOf)
+                .collect(Collectors.toSet());
+
+        Set<User> users = userServiceImpl.findUsersByStringIds(userIds);
+
         return chatService.createChatRoom(request.getName(), users);
     }
 
