@@ -27,5 +27,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 		// 유저 정보를 담은 CustomUserDetail 객체를 반환
 		return new CustomUserDetail(user);
+
+
+	}
+
+	public UserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
+		// 유저를 데이터베이스에서 userId로 검색
+		User user = userRepository.findByUserId(userId)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with userId: " + userId));
+
+		return new CustomUserDetail(user);
 	}
 }

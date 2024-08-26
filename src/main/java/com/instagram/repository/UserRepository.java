@@ -33,4 +33,9 @@ public interface UserRepository extends JpaRepository<User, Long> {  // Long 타
     // 채팅 기능 위해 추가 - 서정
     List<User> findFriendsById(Long userId); // 특정 사용자 ID의 친구 목록 조회
 
+    // userId, Email boolean 추가 - 윤선
+    boolean existsByUserId(String userId);
+    boolean existsByEmail(String Email);
+
+
 }

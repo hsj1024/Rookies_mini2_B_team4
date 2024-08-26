@@ -29,6 +29,7 @@ package com.instagram.service;
 import com.instagram.dto.FollowDto;
 import com.instagram.dto.PhotoDto;
 import com.instagram.dto.UserDto;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -50,5 +51,8 @@ public interface UserService {
     UserDto updateUser(Long userId, UserDto updatedUser, MultipartFile file);
 
     List<UserDto> getFriends(Long userId);
+    UserDetails loadUserByUserId(String userId);
+
+
 
 }

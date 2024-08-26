@@ -3,6 +3,8 @@ package com.instagram.controller;
 import com.instagram.dto.FollowDto;
 import com.instagram.dto.PhotoDto;
 import com.instagram.dto.UserDto;
+import com.instagram.entity.User;
+import com.instagram.repository.UserRepository;
 import com.instagram.service.FollowService;
 import com.instagram.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    private final UserRepository userRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUserByUserId(@PathVariable("id") Long id){
@@ -67,6 +71,12 @@ public class UserController {
     public ResponseEntity<List<UserDto>> getFriends(@PathVariable Long userId) {
         List<UserDto> friends = userService.getFriends(userId);
         return ResponseEntity.ok(friends);
+    }
+
+    @GetMapping("/nameToId/{userName}")
+    public ResponseEntity<Long> getUserByName(@PathVariable String userName) {
+        User user = userRepository.findByUserName(userName);
+        return ResponseEntity.ok(user.getId());
     }
 
 }
