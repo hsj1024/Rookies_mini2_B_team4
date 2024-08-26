@@ -131,6 +131,16 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserDto(savedUser);
     }
 
+    @Override
+    public List<UserDto> getFriends(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return user.getFriends().stream()
+                .map(friend -> new UserDto(friend.getId(), friend.getUserId(), friend.getUserName(), friend.getPassword(), friend.getEmail(), friend.getProfileImage()))
+                .collect(Collectors.toList());
+    }
+
     @Transactional(readOnly = true)
     public Set<User> findUsersByStringIds(Set<String> userIds) {
         // Set<String> 타입의 userIds를 사용하여 User 엔티티를 조회하고 Set<User>로 반환
@@ -143,4 +153,6 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findUserById(Long id) {
         return userRepository.findById(id);
     }
+
+
 }

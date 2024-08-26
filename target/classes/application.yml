@@ -69,5 +69,5 @@ spring:
     flyway:
       user: boot
       password: boot
-      baseline-on-migrate: false
+      baseline-on-migrate: true
 

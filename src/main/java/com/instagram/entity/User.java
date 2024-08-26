@@ -26,7 +26,9 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -35,7 +37,7 @@ import java.util.List;
 @Entity
 @DynamicUpdate
 @Table (name = "Users")
-public class User {
+public class    User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,6 +64,15 @@ public class User {
 
     @Transient
     private String passwordConfirm;
+
+    // 친구 목록 추가 =채팅 기능
+    @ManyToMany
+    @JoinTable(
+            name = "user_friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private Set<User> friends = new HashSet<>();
 
     // 필요한 모든 필드를 포함하는 생성자
     public User(Long id, String userId, String userName, String email, String password, String profileImage) {

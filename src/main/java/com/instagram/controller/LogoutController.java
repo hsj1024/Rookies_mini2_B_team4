@@ -18,6 +18,6 @@ public class LogoutController {
 			new SecurityContextLogoutHandler().logout(request, response, authentication);
 		}
 		
-		return "redirect:/home"; // SecurityConfiguration 에서 설정한 logoutSuccessUrl 값 보다 우선
+		return "redirect:/api/main"; // SecurityConfiguration 에서 설정한 logoutSuccessUrl 값 보다 우선
 	}
 }

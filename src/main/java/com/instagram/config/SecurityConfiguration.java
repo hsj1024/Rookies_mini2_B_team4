@@ -1,116 +1,53 @@
-//package com.instagram.config;
-//
-//import com.instagram.security.CustomAuthenticationSuccessHandler;
-//import com.instagram.security.JwtRequestFilter;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.web.SecurityFilterChain;
-//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-//
-//@Configuration
-//@EnableWebSecurity
-//public class SecurityConfiguration {
-//
-//   @Autowired
-//   private JwtRequestFilter jwtRequestFilter;
-//
-//   @Autowired
-//   private CustomAuthenticationSuccessHandler successHandler;
-//
-//   @Bean
-//   SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//      http
-//            .authorizeHttpRequests((auth) -> auth
-//                  .requestMatchers("/", "/login", "/home", "/join", "/joinProc", "/api/loginProc", "/favicon.ico").permitAll()
-//                  .requestMatchers("/admin").hasRole("ADMIN")
-//                  .requestMatchers("/board/**", "/api/**").hasAnyRole("ADMIN", "USER")
-//                  .anyRequest().authenticated()
-//            )
-//            .formLogin((auth) -> auth
-//                  .loginProcessingUrl("/api/loginProc")
-//                  .permitAll()
-//                  .successHandler(successHandler)
-//            )
-//            .csrf((auth) -> auth.disable())  // CSRF를 필요 시 활성화
-//            .logout((auth) -> auth
-//                  .logoutUrl("/logout")
-//                  .logoutSuccessUrl("/")
-//                  .invalidateHttpSession(true)
-//                  .deleteCookies("JSESSIONID")  // 로그아웃 시 세션과 쿠키 제거
-//            )
-//            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//      return http.build();
-//   }
-//
-//   @Bean
-//   BCryptPasswordEncoder bCryptPasswordEncoder() {
-//      return new BCryptPasswordEncoder();
-//   }
-//
-//
-//}
-
 package com.instagram.config;
 
-import com.instagram.security.CustomAuthenticationSuccessHandler;
+import com.instagram.security.CustomUserDetailsService;
 import com.instagram.security.JwtRequestFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
-	@Autowired
-	private JwtRequestFilter jwtRequestFilter;
+	private final CustomUserDetailsService userDetailsService;
+	private final JwtRequestFilter jwtRequestFilter;
 
-	@Autowired
-	private CustomAuthenticationSuccessHandler successHandler;
-
-	@Autowired
-	private CorsConfigurationSource corsConfigurationSource; // CorsConfig에서 정의된 Bean을 주입
+	public SecurityConfiguration(CustomUserDetailsService userDetailsService, JwtRequestFilter jwtRequestFilter) {
+		this.userDetailsService = userDetailsService;
+		this.jwtRequestFilter = jwtRequestFilter;
+	}
 
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+	public static BCryptPasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-				.cors(cors -> cors.configurationSource(corsConfigurationSource)) // 새로운 방식으로 CORS 설정
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/", "/login", "/home","/api/main", "/join", "/joinProc", "/api/loginProc", "/favicon.ico").permitAll()
-						.requestMatchers("/admin").hasRole("ADMIN")
-						.requestMatchers("/board/**", "/api/**").hasAnyRole("ADMIN", "USER")
+						.requestMatchers("/api/login", "/api/main", "/ws/**", "/api/main/write", "api/join/register").permitAll()
 						.anyRequest().authenticated()
 				)
-				.formLogin(form -> form
-						.loginProcessingUrl("/api/loginProc")
-						.permitAll()
-						.successHandler(successHandler)
-				)
-				.csrf(csrf -> csrf.disable())  // 필요 시 CSRF 활성화
-				.logout(logout -> logout
-						.logoutUrl("/logout")
-						.logoutSuccessUrl("/")
-						.invalidateHttpSession(true)
-						.deleteCookies("JSESSIONID")  // 로그아웃 시 세션과 쿠키 삭제
-				)
-				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+				.csrf(csrf -> csrf.disable()) // REST API의 경우 CSRF 보호를 비활성화하는 것이 일반적
+				.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+
+		        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션 관리 비활성화 (JWT 토큰 사용 시)
+
 
 		return http.build();
 	}
 
 	@Bean
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
-		return new BCryptPasswordEncoder();
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+		return authenticationConfiguration.getAuthenticationManager();
 	}
 }

@@ -1,10 +1,7 @@
 package com.instagram.common;
 
 import com.instagram.entity.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -40,13 +37,13 @@ public class JwtUtils {
 		this.expirationTime = Long.parseLong(expiration);
 	}
 
-	public String generateToken(User user) {
+	public String generateToken(String userName) {
 		Instant now = Instant.now();
 		String jwtToken = Jwts.builder()
-				.claim("name", user.getUserName())
-				.claim("email", user.getEmail())
-				.setSubject(user.getUserName())
-				.setId(String.valueOf(user.getId()))
+				.claim("name", userName)
+				.claim("email", "userEmail")
+				.setSubject(userName)
+				//.setId(String.valueOf(user.getId()))
 				.setIssuedAt(Date.from(now))
 				.setExpiration(Date.from(now.plusMillis(expirationTime)))
 				.signWith(hmacKey) // SignatureAlgorithm을 제거하고 Key만 사용
@@ -71,9 +68,20 @@ public class JwtUtils {
 				.getBody(); // getBody()는 여전히 사용 가능
 	}
 
+//	public String getSubjectFromToken(String token) {
+//		final Claims claims = getAllClaimsFromToken(token);
+//		return claims.getSubject();
+//	}
 	public String getSubjectFromToken(String token) {
-		final Claims claims = getAllClaimsFromToken(token);
-		return claims.getSubject();
+		try {
+			return Jwts.parser()
+					.setSigningKey(hmacKey)
+					.parseClaimsJws(token)
+					.getBody()
+					.getSubject();
+		} catch (JwtException e) {
+			throw new RuntimeException("Failed to extract subject from token", e);
+		}
 	}
 
 	private Date getExpirationDateFromToken(String token) {
@@ -86,16 +94,24 @@ public class JwtUtils {
 		return expiration.before(new Date());
 	}
 
+//	public boolean validateToken(String token, User user) {
+//		// 토큰 유효기간 체크
+//		if (isTokenExpired(token)) {
+//			return false;
+//		}
+//
+//		// 토큰 내용을 검증
+//		String subject = getSubjectFromToken(token);
+//		String username = user.getUserName();
+//
+//		return subject != null && username != null && subject.equals(username);
+//	}
 	public boolean validateToken(String token, User user) {
-		// 토큰 유효기간 체크
-		if (isTokenExpired(token)) {
+		try {
+			String username = getSubjectFromToken(token);
+			return (username.equals(user.getUserName()) && !isTokenExpired(token));
+		} catch (JwtException e) {
 			return false;
 		}
-
-		// 토큰 내용을 검증
-		String subject = getSubjectFromToken(token);
-		String username = user.getUserName();
-
-		return subject != null && username != null && subject.equals(username);
 	}
 }

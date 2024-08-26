@@ -63,4 +63,10 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @GetMapping("/{userId}/friends")
+    public ResponseEntity<List<UserDto>> getFriends(@PathVariable Long userId) {
+        List<UserDto> friends = userService.getFriends(userId);
+        return ResponseEntity.ok(friends);
+    }
+
 }

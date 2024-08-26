@@ -226,9 +226,10 @@ services:
       - kafka-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      #test: "NONE"
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 2
 
   springboot:
     image: hsj1024/rookies_talk_app:latest  # Docker Hub에서 이미지 get
