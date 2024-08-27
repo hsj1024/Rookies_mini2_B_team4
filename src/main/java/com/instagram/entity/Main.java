@@ -23,7 +23,8 @@ public class Main {
 
     @Column(name = "likes")
     private int likes = 0;
-
+    @Column(name = "user_id")
+    private String userId;
     @Column(name = "created_at")
     @CreatedDate
     private LocalDateTime createdAt = LocalDateTime.now();

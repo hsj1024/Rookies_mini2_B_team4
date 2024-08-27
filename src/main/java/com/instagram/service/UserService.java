@@ -48,7 +48,7 @@ public interface UserService {
 
     List<PhotoDto> getPhotoByUserId(Long userId);
 
-    UserDto updateUser(Long userId, UserDto updatedUser, MultipartFile file);
+    UserDto updateUser(Long userId, String userName, MultipartFile file);
 
     List<UserDto> getFriends(Long userId);
     UserDetails loadUserByUserId(String userId);

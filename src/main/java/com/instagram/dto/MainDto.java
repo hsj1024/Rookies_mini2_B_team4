@@ -13,6 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class MainDto {
     private Long id;
+
+    private String userId; // 작성자 ID 추가
+
     private String contents;
     private List<CommentDto> text;
     private List<PhotoDto> photos;

@@ -32,13 +32,25 @@ public class MainServiceImpl implements MainService {
                 .map(this::mapToMainDtoWithComments) // 댓글 포함
                 .collect(Collectors.toList());
     }
-
     @Override
     public MainDto getPostById(Long id) {
         Main post = mainRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
         return mapToMainDtoWithComments(post); // 댓글 포함
     }
+//    @Override
+//    public MainDto getPostById(Long id) {
+//        Main post = mainRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+//        return mapToMainDtoWithComments(post); // 댓글 포함
+//    }
+
+//    @Override
+//    public MainDto getPostById(String id) {
+//        Main post = mainRepository.findById(id)
+//                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+//        return mapToMainDtoWithComments(post); // 댓글 포함
+//    }
 
     @Override
     public MainDto createPost(MainDto mainDto) {
@@ -83,5 +95,16 @@ public class MainServiceImpl implements MainService {
         mainDto.setText(comments); // MainDto에 댓글 설정
         return mainDto;
     }
+    @Override
+    public List<MainDto> getPostsByUserId(String userId) {
+        System.out.println("Fetching posts for userId: " + userId);
+
+        List<Main> posts = mainRepository.findByUserId(userId);
+        return posts.stream()
+                .map(this::mapToMainDtoWithComments)
+                .collect(Collectors.toList());
+    }
+
+
 }
 

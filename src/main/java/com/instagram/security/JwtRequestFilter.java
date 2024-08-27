@@ -1,3 +1,5 @@
+//JwtRequestFilter
+
 //package com.instagram.security;
 //
 //import com.instagram.common.JwtUtils;
@@ -23,66 +25,66 @@
 //@Slf4j
 //public class JwtRequestFilter extends OncePerRequestFilter {
 //
-//	@Autowired
-//	private JwtUtils jwtUtils;
+//   @Autowired
+//   private JwtUtils jwtUtils;
 //
-//	@Autowired
-//	private UserRepository repository;
+//   @Autowired
+//   private UserRepository repository;
 //
-//	@Override
-//	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-//			throws ServletException, IOException {
-//		String uri = request.getRequestURI();
-//		if (uri.equals("/") || uri.equals("/login") || uri.equals("/api/loginProc") || uri.equals("/joinProc")
-//				|| uri.equals("/favicon.ico") || uri.equals("/api/main")) {
-//			filterChain.doFilter(request, response);
-//			return;
-//		}
+//   @Override
+//   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+//         throws ServletException, IOException {
+//      String uri = request.getRequestURI();
+//      if (uri.equals("/") || uri.equals("/login") || uri.equals("/api/loginProc") || uri.equals("/joinProc")
+//            || uri.equals("/favicon.ico") || uri.equals("/api/main")) {
+//         filterChain.doFilter(request, response);
+//         return;
+//      }
 //
-//		String jwtToken = null;
-//		String subject = null;
+//      String jwtToken = null;
+//      String subject = null;
 //
-//		String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+//      String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 //
-//		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-//			jwtToken = authorizationHeader.substring(7);
-//			try {
-//				subject = jwtUtils.getSubjectFromToken(jwtToken);
-//			} catch (Exception e) {
-//				log.error("JWT 토큰 처리 중 예외 발생: " + e.getMessage());
-//				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//				response.getWriter().write("Invalid JWT token");
-//				response.getWriter().flush();
-//				return;
-//			}
-//		} else {
-//			log.error("Authorization 헤더 누락 또는 토큰 형식 오류");
-//			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//			response.getWriter().write("Invalid JWT token");
-//			response.getWriter().flush();
-//			return;
-//		}
+//      if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+//         jwtToken = authorizationHeader.substring(7);
+//         try {
+//            subject = jwtUtils.getSubjectFromToken(jwtToken);
+//         } catch (Exception e) {
+//            log.error("JWT 토큰 처리 중 예외 발생: " + e.getMessage());
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.getWriter().write("Invalid JWT token");
+//            response.getWriter().flush();
+//            return;
+//         }
+//      } else {
+//         log.error("Authorization 헤더 누락 또는 토큰 형식 오류");
+//         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//         response.getWriter().write("Invalid JWT token");
+//         response.getWriter().flush();
+//         return;
+//      }
 //
-//		if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-//			User user = repository.findByUserName(subject);
+//      if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//         User user = repository.findByUserName(subject);
 //
-//			if (user != null && jwtUtils.validateToken(jwtToken, user)) {
-//				CustomUserDetail userDetail = new CustomUserDetail(user);
-//				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-//						userDetail.getUsername(), null, userDetail.getAuthorities());
+//         if (user != null && jwtUtils.validateToken(jwtToken, user)) {
+//            CustomUserDetail userDetail = new CustomUserDetail(user);
+//            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
+//                  userDetail.getUsername(), null, userDetail.getAuthorities());
 //
-//				usernamePasswordAuthenticationToken
-//						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//            usernamePasswordAuthenticationToken
+//                  .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 //
-//				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-//			} else {
-//				log.error("JWT 토큰 검증 실패 또는 사용자 정보가 유효하지 않음");
-//				SecurityContextHolder.getContext().setAuthentication(null);
-//			}
-//		}
+//            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+//         } else {
+//            log.error("JWT 토큰 검증 실패 또는 사용자 정보가 유효하지 않음");
+//            SecurityContextHolder.getContext().setAuthentication(null);
+//         }
+//      }
 //
-//		filterChain.doFilter(request, response);
-//	}
+//      filterChain.doFilter(request, response);
+//   }
 //}
 
 
@@ -91,6 +93,7 @@ package com.instagram.security;
 import com.instagram.common.JwtUtils;
 import com.instagram.dto.CustomUserDetail;
 import com.instagram.entity.User;
+import com.instagram.exception.ResourceNotFoundException;
 import com.instagram.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -155,12 +158,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		}
 
 		if (subject != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			User user = repository.findByUserName(subject);
+			User user = repository.findByUserId(subject)
+					.orElseThrow(() ->
+							new ResourceNotFoundException("User not exists")
+					);
 
 			if (user != null && jwtUtils.validateToken(jwtToken, user)) {
 				CustomUserDetail userDetail = new CustomUserDetail(user);
 				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-						userDetail.getUsername(), null, userDetail.getAuthorities());
+						userDetail.getUserId(), null, userDetail.getAuthorities());
 
 				usernamePasswordAuthenticationToken
 						.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -175,3 +181,5 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 		filterChain.doFilter(request, response);
 	}
 }
+
+//

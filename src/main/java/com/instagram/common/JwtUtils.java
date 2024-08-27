@@ -1,3 +1,4 @@
+//JwtUtils
 package com.instagram.common;
 
 import com.instagram.entity.User;
@@ -37,12 +38,12 @@ public class JwtUtils {
 		this.expirationTime = Long.parseLong(expiration);
 	}
 
-	public String generateToken(String userName) {
+	public String generateToken(String userId) {
 		Instant now = Instant.now();
 		String jwtToken = Jwts.builder()
-				.claim("name", userName)
+				.claim("name", userId)
 				.claim("email", "userEmail")
-				.setSubject(userName)
+				.setSubject(userId)
 				//.setId(String.valueOf(user.getId()))
 				.setIssuedAt(Date.from(now))
 				.setExpiration(Date.from(now.plusMillis(expirationTime)))
@@ -53,13 +54,13 @@ public class JwtUtils {
 		return jwtToken;
 	}
 
-//	private Claims getAllClaimsFromToken(String token) {
-//		return Jwts.parser()
-//				.setSigningKey(hmacKey)
-//				.build()
-//				.parseClaimsJws(token)
-//				.getBody();
-//	}
+	//   private Claims getAllClaimsFromToken(String token) {
+//      return Jwts.parser()
+//            .setSigningKey(hmacKey)
+//            .build()
+//            .parseClaimsJws(token)
+//            .getBody();
+//   }
 	private Claims getAllClaimsFromToken(String token) {
 		return Jwts.parserBuilder() // parserBuilder 메서드를 사용
 				.setSigningKey(hmacKey) // 여전히 사용할 수 있음
@@ -68,10 +69,10 @@ public class JwtUtils {
 				.getBody(); // getBody()는 여전히 사용 가능
 	}
 
-//	public String getSubjectFromToken(String token) {
-//		final Claims claims = getAllClaimsFromToken(token);
-//		return claims.getSubject();
-//	}
+	//   public String getSubjectFromToken(String token) {
+//      final Claims claims = getAllClaimsFromToken(token);
+//      return claims.getSubject();
+//   }
 	public String getSubjectFromToken(String token) {
 		try {
 			return Jwts.parser()
@@ -94,22 +95,22 @@ public class JwtUtils {
 		return expiration.before(new Date());
 	}
 
-//	public boolean validateToken(String token, User user) {
-//		// 토큰 유효기간 체크
-//		if (isTokenExpired(token)) {
-//			return false;
-//		}
+	//   public boolean validateToken(String token, User user) {
+//      // 토큰 유효기간 체크
+//      if (isTokenExpired(token)) {
+//         return false;
+//      }
 //
-//		// 토큰 내용을 검증
-//		String subject = getSubjectFromToken(token);
-//		String username = user.getUserName();
+//      // 토큰 내용을 검증
+//      String subject = getSubjectFromToken(token);
+//      String username = user.getUserName();
 //
-//		return subject != null && username != null && subject.equals(username);
-//	}
+//      return subject != null && username != null && subject.equals(username);
+//   }
 	public boolean validateToken(String token, User user) {
 		try {
-			String username = getSubjectFromToken(token);
-			return (username.equals(user.getUserName()) && !isTokenExpired(token));
+			String userId = getSubjectFromToken(token);
+			return (userId.equals(user.getUserId()) && !isTokenExpired(token));
 		} catch (JwtException e) {
 			return false;
 		}

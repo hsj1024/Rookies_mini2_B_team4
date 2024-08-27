@@ -14,4 +14,7 @@ public interface MainService {
     MainDto updatePost(Long id, MainDto mainDto);
 
     void deletePost(Long id);
+
+    // 특정 사용자의 게시글을 가져오는 메서드
+    List<MainDto> getPostsByUserId(String userId);
 }

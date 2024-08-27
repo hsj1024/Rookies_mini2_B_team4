@@ -110,25 +110,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(Long userId, UserDto updatedUser, MultipartFile file) {
+    public UserDto updateUser(Long userId, String userName, MultipartFile file) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not exist")
                 );
-        if (updatedUser.getUserName() != null)
-            user.setUserName(updatedUser.getUserName());
-
+        //user.setUserName(updatedUser.getUserName());
+        if (userName != null) {
+            user.setUserName(userName);
+        }
         String uploadDir = "profileImage/";
-        if (updatedUser.getProfileImage() != null) {
+        if (file != null) {
             try {
                 String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
                 Path filePath = Paths.get(uploadDir + fileName);
                 Files.createDirectories(filePath.getParent());
                 Files.write(filePath, file.getBytes());
+                user.setProfileImage(filePath.toString());
             } catch (IOException e) {
                 throw new RuntimeException("Failed to store file " + file.getOriginalFilename(), e);
             }
-            user.setProfileImage(updatedUser.getProfileImage());
         }
         User savedUser = userRepository.save(user);
         return UserMapper.mapToUserDto(savedUser);

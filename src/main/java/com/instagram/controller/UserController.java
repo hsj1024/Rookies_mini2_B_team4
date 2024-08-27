@@ -1,18 +1,23 @@
 package com.instagram.controller;
 
 import com.instagram.dto.FollowDto;
+import com.instagram.dto.MainDto;
 import com.instagram.dto.PhotoDto;
 import com.instagram.dto.UserDto;
 import com.instagram.entity.User;
+import com.instagram.exception.ResourceNotFoundException;
 import com.instagram.repository.UserRepository;
 import com.instagram.service.FollowService;
+import com.instagram.service.MainService;
 import com.instagram.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
@@ -20,6 +25,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final MainService mainService;  // MainService 추가
+
 
     private final UserRepository userRepository;
 
@@ -61,9 +68,9 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId,
-                                              @RequestParam("user") UserDto updatedUser,
+                                              @RequestParam("user") String userName,
                                               @RequestParam("file")MultipartFile file){
-        UserDto userDto = userService.updateUser(userId, updatedUser, file);
+        UserDto userDto = userService.updateUser(userId, userName, file);
         return ResponseEntity.ok(userDto);
     }
 
@@ -74,9 +81,27 @@ public class UserController {
     }
 
     @GetMapping("/nameToId/{userName}")
-    public ResponseEntity<Long> getUserByName(@PathVariable String userName) {
-        User user = userRepository.findByUserName(userName);
+    public ResponseEntity<Long> getUserByUserId(@PathVariable String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User is not exists with a given id: " + userId)
+                );
         return ResponseEntity.ok(user.getId());
     }
+
+    // 사용자의 게시글 보여주기 위해 내 정보 가져오기 - 보성님 기능
+//    @GetMapping("/{userId}/posts")
+//    public ResponseEntity<List<MainDto>> getPostsByUserId(@PathVariable String userId) {
+//        try {
+//            List<MainDto> userPosts = mainService.getPostsByUserId(userId);
+//            return ResponseEntity.ok(userPosts);
+//        } catch (ResourceNotFoundException e) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 if not found
+//        } catch (Exception e) {
+//            // Log the error for debugging
+//            System.out.println("An error occurred: " + e.getMessage());
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Return 500 for other errors
+//        }
+//    }
 
 }
