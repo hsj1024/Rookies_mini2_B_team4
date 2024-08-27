@@ -37,5 +37,8 @@ public interface UserRepository extends JpaRepository<User, Long> {  // Long 타
     boolean existsByUserId(String userId);
     boolean existsByEmail(String Email);
 
+    // 은영님 추가
+    List<User> findByUserIdContainingOrUserNameContaining(String userId, String userName);
+
 
 }

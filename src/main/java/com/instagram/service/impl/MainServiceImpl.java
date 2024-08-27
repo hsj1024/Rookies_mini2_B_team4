@@ -5,6 +5,7 @@ import com.instagram.dto.MainDto;
 import com.instagram.entity.Main;
 import com.instagram.dto.mapper.MainMapper;
 import com.instagram.repository.CommentRepository;
+import com.instagram.repository.FollowRepository;
 import com.instagram.repository.MainRepository;
 import com.instagram.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +28,20 @@ public class MainServiceImpl implements MainService {
     @Autowired
     private MainMapper mainMapper;
 
+    @Autowired
+    private FollowRepository followRepository;
+
     @Override
-    public List<MainDto> getAllPosts() {
-        List<Main> posts = mainRepository.findAll();
+    public List<MainDto> getAllPosts(String loggedInUserId) {
+        // 로그인한 사용자가 팔로우한 사용자 목록을 가져옵니다.
+        List<String> followingIds = followRepository.findFollowingIdsByFollowerId(loggedInUserId);
+
+        // 자신의 글은 항상 포함되도록 합니다.
+        followingIds.add(loggedInUserId);
+        System.out.println("Following IDs: " + followingIds);
+        // 팔로우한 사용자들의 게시글만 가져옵니다.
+        List<Main> posts = mainRepository.findByUserIdIn(followingIds);
+        System.out.println("Posts found: " + posts.size());
         return posts.stream()
                 .map(this::mapToMainDtoWithComments) // 댓글 포함
                 .collect(Collectors.toList());

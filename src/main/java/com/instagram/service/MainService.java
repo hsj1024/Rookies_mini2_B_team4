@@ -5,7 +5,7 @@ import com.instagram.dto.MainDto;
 import java.util.List;
 
 public interface MainService {
-    List<MainDto> getAllPosts();
+    List<MainDto> getAllPosts(String loggedInUserId);
 
     MainDto getPostById(Long id);
 

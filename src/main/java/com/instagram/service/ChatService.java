@@ -87,6 +87,73 @@
 //        messages.forEach(msg -> System.out.println(msg.getContent()));
 //    }
 //}
+
+////2
+//package com.instagram.service;
+//
+//import com.instagram.entity.ChatMessage;
+//import com.instagram.entity.ChatRoom;
+//import com.instagram.entity.User;
+//import com.instagram.repository.ChatMessageRepository;
+//import com.instagram.repository.ChatRoomRepository;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.kafka.core.KafkaTemplate;
+//import org.springframework.stereotype.Service;
+//import org.springframework.transaction.annotation.Transactional;
+//
+//import java.time.LocalDateTime;
+//import java.util.List;
+//import java.util.Set;
+//
+//@Service
+//public class ChatService {
+//
+//    @Autowired
+//    private ChatRoomRepository chatRoomRepository;
+//
+//    @Autowired
+//    private ChatMessageRepository chatMessageRepository;
+//
+//    @Autowired
+//    private KafkaTemplate<String, Object> kafkaTemplate;
+//
+//    @Transactional
+//    public ChatRoom createChatRoom(String name, Set<User> users) {
+//        ChatRoom chatRoom = new ChatRoom();
+//        chatRoom.setName(name);
+//        chatRoom.setUsers(users);
+//        return chatRoomRepository.save(chatRoom);
+//    }
+//
+//    @Transactional
+//    public void sendMessage(Long chatRoomId, User sender, String content) {
+//        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+//                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
+//
+//        ChatMessage message = new ChatMessage();
+//        message.setChatRoom(chatRoom);
+//        message.setSender(sender);
+//        message.setContent(content);
+//        message.setTimestamp(LocalDateTime.now());
+//
+//        kafkaTemplate.send("chat-topic", message);
+//        chatMessageRepository.save(message);
+//    }
+//
+//    public List<ChatMessage> getMessages(Long chatRoomId) {
+//        return chatMessageRepository.findByChatRoomId(chatRoomId);
+//    }
+//
+//    public void printMessages(Long chatRoomId) {
+//        List<ChatMessage> messages = chatMessageRepository.findByChatRoomId(chatRoomId);
+//        messages.forEach(msg -> System.out.println(msg.getContent()));
+//    }
+//
+//    public List<ChatRoom> getChatRoomsForUser(String userId) {
+//        // userId로 채팅방 목록을 가져오는 로직 추가
+//        return chatRoomRepository.findByUserId(userId);
+//    }
+//}
 package com.instagram.service;
 
 import com.instagram.entity.ChatMessage;
@@ -112,8 +179,10 @@ public class ChatService {
     @Autowired
     private ChatMessageRepository chatMessageRepository;
 
+//    @Autowired
+//    private KafkaTemplate<String, Object> kafkaTemplate;
     @Autowired
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private KafkaTemplate<String, ChatMessage> kafkaTemplate;
 
     @Transactional
     public ChatRoom createChatRoom(String name, Set<User> users) {
@@ -145,5 +214,10 @@ public class ChatService {
     public void printMessages(Long chatRoomId) {
         List<ChatMessage> messages = chatMessageRepository.findByChatRoomId(chatRoomId);
         messages.forEach(msg -> System.out.println(msg.getContent()));
+    }
+
+    public List<ChatRoom> getChatRoomsForUser(String userId) {
+        // userId로 채팅방 목록을 가져오는 로직
+        return chatRoomRepository.findByUserId(userId);
     }
 }

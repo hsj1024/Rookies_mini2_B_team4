@@ -117,6 +117,13 @@ public class UserController {
         }
     }
 
+    @GetMapping("/search/{search}")
+    public ResponseEntity<List<User>> searchUser(@PathVariable String search) {
+        List<User> users = userRepository.findByUserIdContainingOrUserNameContaining(search, search);
+
+        return ResponseEntity.ok(users);
+    }
+
     // 사용자의 게시글 보여주기 위해 내 정보 가져오기 - 보성님 기능
 //    @GetMapping("/{userId}/posts")
 //    public ResponseEntity<List<MainDto>> getPostsByUserId(@PathVariable String userId) {

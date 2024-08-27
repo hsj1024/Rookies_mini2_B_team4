@@ -111,14 +111,20 @@ public class MainController {
     // 모든 게시글 조회
     @GetMapping
     public ResponseEntity<List<MainDto>> getAllPosts() {
-        try {
-            List<MainDto> posts = mainService.getAllPosts();
-            return ResponseEntity.ok(posts);
-        } catch (Exception e) {
-            logger.error("Failed to fetch all posts", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getName())) {
+            // 인증되지 않은 사용자이거나 익명 사용자
+            System.out.println("User is not authenticated or is anonymous");
+        } else {
+            String loggedInUserId = authentication.getName();
+            System.out.println("Authenticated User ID: " + loggedInUserId);
         }
+        String loggedInUserId = authentication.getName();
+
+        List<MainDto> posts = mainService.getAllPosts(loggedInUserId);
+        return ResponseEntity.ok(posts);
     }
+
 
     // 특정 게시글 ID로 조회
     @GetMapping("/{id}")

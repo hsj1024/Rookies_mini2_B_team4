@@ -205,6 +205,8 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_MESSAGE_MAX_BYTES: 104857600  # 100MB
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 104857600  # 100MB
     depends_on:
       - zookeeper
     container_name: kafka_new

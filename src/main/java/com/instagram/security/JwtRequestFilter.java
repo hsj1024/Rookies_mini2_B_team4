@@ -125,7 +125,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		String uri = request.getRequestURI();
 		if (uri.equals("/") || uri.equals("/api/login") || uri.equals("/api/loginProc") || uri.equals("/api/join/register")
-				|| uri.equals("/favicon.ico") || uri.equals("/api/main") || uri.equals("/login") || uri.equals("/api/write")) {
+				|| uri.equals("/favicon.ico") || uri.equals("/login") || uri.equals("/api/write")) {
 			filterChain.doFilter(request, response);
 			return;
 		}

@@ -16,10 +16,9 @@ public class KafkaConsumerService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @KafkaListener(topics = "chat-topic", groupId = "chat-group")
+    @KafkaListener(topics = "chat-room-1", groupId = "chat-group")
     public void listen(ChatMessage message) {
-        //messagingTemplate.convertAndSend("/topic/messages/" + message.getChatRoom().getId(), message);
-        System.out.println("Received Message: " + message.getContent());
-        messagingTemplate.convertAndSend("/topic/messages/" + message.getChatRoom().getId(), message);
+        String destination = "/topic/messages/" + message.getChatRoom().getId();
+        messagingTemplate.convertAndSend(destination, message);
     }
 }

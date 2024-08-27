@@ -8,8 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 // java utils 내용 선언
-@EnableConfigurationProperties(JwtConfig.class)
-@ComponentScan(basePackages = {"com.instagram"})
+//@EnableConfigurationProperties(JwtConfig.class)
+@ComponentScan(basePackages = "com.instagram")
 
 public class InstgramApplication {
 

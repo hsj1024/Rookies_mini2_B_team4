@@ -8,6 +8,7 @@ import java.util.List;
 public interface MainRepository extends JpaRepository<Main, Long> {
 
     List<Main> findByUserId(String userId);
+    List<Main> findByUserIdIn(List<String> userIds);
 
 
 }
