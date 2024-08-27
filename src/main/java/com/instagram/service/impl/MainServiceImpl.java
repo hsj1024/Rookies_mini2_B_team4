@@ -8,6 +8,8 @@ import com.instagram.repository.CommentRepository;
 import com.instagram.repository.MainRepository;
 import com.instagram.service.MainService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,10 +56,21 @@ public class MainServiceImpl implements MainService {
 
     @Override
     public MainDto createPost(MainDto mainDto) {
+        // 로그인된 사용자 정보 가져오기 (Spring Security)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUserId = authentication.getName();
+
+        // MainDto에 userId 설정
+        mainDto.setUserId(loggedInUserId);
+
+        // Main 엔티티로 변환 및 저장
         Main post = mainMapper.toEntity(mainDto);
+        post.setUserId(loggedInUserId);  // userId가 null이 아니도록 설정
         Main savedPost = mainRepository.save(post);
+
         return mapToMainDtoWithComments(savedPost);
     }
+
 
     @Override
     public MainDto updatePost(Long id, MainDto mainDto) {

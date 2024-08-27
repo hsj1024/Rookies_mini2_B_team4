@@ -87,6 +87,8 @@ import com.instagram.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.slf4j.Logger;
@@ -135,30 +137,31 @@ public class MainController {
     // 게시글 등록 및 이미지 업로드
     @PostMapping("/write")
     public ResponseEntity<MainDto> createPost(@RequestPart("post") MainDto mainDto,
-                                              @RequestPart("files") List<MultipartFile> files) {
+                                              @RequestPart(value = "files", required = false) List<MultipartFile> files,
+                                              @RequestHeader(value = "User-Id", required = false) String userId) {
+        // 만약 헤더로 userId를 전달받지 않았다면, 로그인된 사용자 정보 가져오기
+        if (userId == null || userId.isEmpty()) {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            userId = authentication.getName();
+        }
 
+        // MainDto에 userId 설정
+        mainDto.setUserId(userId);
 
-        // 게시글을 먼저 생성
+        // 게시글 생성
         MainDto createdPost = mainService.createPost(mainDto);
 
         // 파일이 존재하는지 확인하고 처리
         if (files != null && !files.isEmpty()) {
-            // mainDto의 photos 리스트가 비어있지 않은지 확인
-            if (mainDto.getPhotos() != null && !mainDto.getPhotos().isEmpty()) {
-                for (MultipartFile file : files) {
-                    // 업로드된 파일을 처리하고, Photo 엔티티로 변환하여 Main과 연결
-                    photoService.uploadPhoto(file, createdPost.getId(),
-                            mainDto.getPhotos().get(0).getUserId(), mainDto.getPhotos().get(0).getCaption());
-                }
-            } else {
-                // Photos 리스트가 비어있다면 기본적으로 처리할 코드 추가
-                // 예를 들어, 로그를 남기거나 기본 값을 설정할 수 있습니다.
-                System.out.println("Photos list is empty or null, skipping photo upload.");
+            for (MultipartFile file : files) {
+                photoService.uploadPhoto(file, createdPost.getId(), userId,
+                        mainDto.getPhotos().isEmpty() ? null : mainDto.getPhotos().get(0).getCaption());
             }
         }
 
-        return ResponseEntity.ok(createdPost);  // JSON으로 반환
+        return ResponseEntity.ok(createdPost);
     }
+
 
     // 게시글 수정
     @PutMapping("/update/{id}")
