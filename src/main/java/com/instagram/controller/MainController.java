@@ -82,6 +82,7 @@
 package com.instagram.controller;
 
 import com.instagram.dto.MainDto;
+import com.instagram.exception.UnauthorizedException;
 import com.instagram.service.MainService;
 import com.instagram.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,9 +173,15 @@ public class MainController {
     // 게시글 수정
     @PutMapping("/update/{id}")
     public ResponseEntity<MainDto> updatePost(@PathVariable Long id, @RequestBody MainDto mainDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUserId = authentication.getName();
+
         try {
-            MainDto updatedPost = mainService.updatePost(id, mainDto);
+            MainDto updatedPost = mainService.updatePost(id, mainDto, loggedInUserId);
             return ResponseEntity.ok(updatedPost);
+        } catch (UnauthorizedException e) {
+            logger.error("Unauthorized access attempt by user: {}", loggedInUserId, e);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         } catch (RuntimeException e) {
             logger.error("Post not found with id: {}", id, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -187,9 +194,15 @@ public class MainController {
     // 게시글 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String loggedInUserId = authentication.getName();
+
         try {
-            mainService.deletePost(id);
+            mainService.deletePost(id, loggedInUserId);
             return ResponseEntity.noContent().build();
+        } catch (UnauthorizedException e) {
+            logger.error("Unauthorized access attempt by user: {}", loggedInUserId, e);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (RuntimeException e) {
             logger.error("Post not found with id: {}", id, e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -198,4 +211,5 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }

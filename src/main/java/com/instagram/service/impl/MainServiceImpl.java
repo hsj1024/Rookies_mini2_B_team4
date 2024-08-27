@@ -4,6 +4,7 @@ import com.instagram.dto.CommentDto;
 import com.instagram.dto.MainDto;
 import com.instagram.entity.Main;
 import com.instagram.dto.mapper.MainMapper;
+import com.instagram.exception.UnauthorizedException;
 import com.instagram.repository.CommentRepository;
 import com.instagram.repository.FollowRepository;
 import com.instagram.repository.MainRepository;
@@ -52,19 +53,6 @@ public class MainServiceImpl implements MainService {
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
         return mapToMainDtoWithComments(post); // 댓글 포함
     }
-//    @Override
-//    public MainDto getPostById(Long id) {
-//        Main post = mainRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
-//        return mapToMainDtoWithComments(post); // 댓글 포함
-//    }
-
-//    @Override
-//    public MainDto getPostById(String id) {
-//        Main post = mainRepository.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
-//        return mapToMainDtoWithComments(post); // 댓글 포함
-//    }
 
     @Override
     public MainDto createPost(MainDto mainDto) {
@@ -85,20 +73,32 @@ public class MainServiceImpl implements MainService {
 
 
     @Override
-    public MainDto updatePost(Long id, MainDto mainDto) {
+    public MainDto updatePost(Long id, MainDto mainDto, String loggedInUserId) {
         Main existingPost = mainRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Post not found with id: "+ id));
+
+        // 글쓴 당사자인지 확인
+        if (!existingPost.getUserId().equals(loggedInUserId)) {
+            throw new UnauthorizedException("You are not authorized to update this post");
+        }
+
         existingPost.setContents(mainDto.getContents());
         Main updatedPost = mainRepository.save(existingPost);
         return mapToMainDtoWithComments(updatedPost);
     }
-
     @Override
-    public void deletePost(Long id) {
+    public void deletePost(Long id, String loggedInUserId) {
         Main post = mainRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+
+        // 글쓴 당사자인지 확인
+        if (!post.getUserId().equals(loggedInUserId)) {
+            throw new UnauthorizedException("You are not authorized to delete this post");
+        }
+
         mainRepository.delete(post);
     }
+
 
     // Main Entity를 MainDto로 매핑하면서 댓글도 포함
     private MainDto mapToMainDtoWithComments(Main main) {

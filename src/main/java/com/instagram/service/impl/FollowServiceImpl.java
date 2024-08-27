@@ -13,7 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,8 @@ public class FollowServiceImpl implements FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
     private final FollowMapper followMapper;
+
+
 
     @Override
     public FollowDto followUser(FollowDto followDto) {
@@ -55,6 +59,18 @@ public class FollowServiceImpl implements FollowService {
         followRepository.deleteByFollowerIdAndFollowingId(follower, following);
     }
 
+
+    // 서정 추가
+//    @Override
+//    public List<FollowDto> getFollowing(Long userId) {
+//        User user = userRepository.findById(userId)
+//                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+//        List<Follow> followList = followRepository.findByFollowerId(user);
+//
+//        return followList.stream()
+//                .map(followMapper::mapToFollowDto)
+//                .collect(Collectors.toList());
+//    }
 
 
 }

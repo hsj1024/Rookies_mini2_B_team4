@@ -11,9 +11,9 @@ public interface MainService {
 
     MainDto createPost(MainDto mainDto);
 
-    MainDto updatePost(Long id, MainDto mainDto);
+    MainDto updatePost(Long id, MainDto mainDto, String loggedInUserId);
 
-    void deletePost(Long id);
+    void deletePost(Long id, String loggedInUserId);
 
     // 특정 사용자의 게시글을 가져오는 메서드
     List<MainDto> getPostsByUserId(String userId);
