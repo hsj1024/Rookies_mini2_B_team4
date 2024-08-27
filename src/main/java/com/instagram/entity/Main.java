@@ -23,7 +23,7 @@ public class Main {
 
     @Column(name = "likes")
     private int likes = 0;
-    @Column(name = "user_id", unique = true, nullable = false)
+    @Column(name = "user_id", nullable = false)
     private String userId;
     @Column(name = "created_at")
     @CreatedDate
