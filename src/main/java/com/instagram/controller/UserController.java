@@ -15,7 +15,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -87,6 +92,29 @@ public class UserController {
                         new ResourceNotFoundException("User is not exists with a given id: " + userId)
                 );
         return ResponseEntity.ok(user.getId());
+    }
+
+    @GetMapping("/profileImg/{userId}")
+    public ResponseEntity<byte[]> getProfileImg(@PathVariable Long userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User is not exists with a given id: " + userId)
+                );
+        if (user.getProfileImage().isEmpty()) return null;
+        else {
+            Path imagePath = Paths.get(user.getProfileImage());
+
+            if (!Files.exists(imagePath)) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found");
+            }
+            try {
+                byte[] imageBytes = Files.readAllBytes(imagePath);
+                return ResponseEntity.ok(imageBytes);
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error reading image file", e);
+            }
+        }
     }
 
     // 사용자의 게시글 보여주기 위해 내 정보 가져오기 - 보성님 기능
