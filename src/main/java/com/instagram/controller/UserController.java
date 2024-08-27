@@ -66,21 +66,21 @@ public class UserController {
         return ResponseEntity.ok(followingNum);
     }
 
+
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("userId") Long userId,
                                               @RequestParam("user") String userName,
-                                              @RequestParam("file")MultipartFile file){
+                                              @RequestParam(value = "file",required = false) MultipartFile file){
         UserDto userDto = userService.updateUser(userId, userName, file);
         return ResponseEntity.ok(userDto);
     }
-
     @GetMapping("/{userId}/friends")
     public ResponseEntity<List<UserDto>> getFriends(@PathVariable Long userId) {
         List<UserDto> friends = userService.getFriends(userId);
         return ResponseEntity.ok(friends);
     }
 
-    @GetMapping("/nameToId/{userName}")
+    @GetMapping("/nameToId/{userId}")
     public ResponseEntity<Long> getUserByUserId(@PathVariable String userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() ->

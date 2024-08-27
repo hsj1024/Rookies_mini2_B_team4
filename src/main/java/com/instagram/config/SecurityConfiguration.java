@@ -38,16 +38,16 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-//				.cors(cors -> cors // CORS 설정 추가
-//						.configurationSource(request -> {
-//							CorsConfiguration config = new CorsConfiguration();
-//							config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // React 앱의 도메인을 허용
-//							config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-//							config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-//							config.setAllowCredentials(true);
-//							return config;
-//						})
-//				)
+				.cors(cors -> cors // CORS 설정 추가
+						.configurationSource(request -> {
+							CorsConfiguration config = new CorsConfiguration();
+							config.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // React 앱의 도메인을 허용
+							config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+							config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+							config.setAllowCredentials(true);
+							return config;
+						})
+				)
 				.csrf(csrf -> csrf.disable()) // REST API의 경우 CSRF 보호를 비활성화하는 것이 일반적
 
 				.authorizeHttpRequests(auth -> auth
