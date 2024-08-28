@@ -33,17 +33,19 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "chat_message")
+
 public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chatroom_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "chat_room_id", nullable = false)  // Foreign key to ChatRoom
     private ChatRoom chatRoom;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)  // Foreign key to User
     private User sender;
 
     @Column(name = "content", nullable = false)

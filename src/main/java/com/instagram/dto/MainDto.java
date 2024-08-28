@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -18,7 +19,7 @@ public class MainDto {
 
     private String contents;
     private List<CommentDto> text;
-    private List<PhotoDto> photos;
+    private List<PhotoDto> photos = new ArrayList<>();
     private int likes = 0;
     private String createdAt;
 }

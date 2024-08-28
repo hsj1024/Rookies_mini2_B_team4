@@ -32,8 +32,11 @@ import com.instagram.dto.UserDto;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
+import com.instagram.entity.User;
+import com.instagram.repository.UserRepository;
 public interface UserService {
 
     UserDto getUserById(Long id);
@@ -52,6 +55,14 @@ public interface UserService {
 
     List<UserDto> getFriends(Long userId);
     UserDetails loadUserByUserId(String userId);
+
+    UserDto findUserById(Long id);
+
+    public Set<User> findUsersByIds(Set<Long> userIds);
+
+
+
+
 
 
 

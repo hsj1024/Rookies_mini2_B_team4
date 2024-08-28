@@ -36,7 +36,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @DynamicUpdate
-@Table (name = "Users")
+@Table (name = "users")
 public class    User {
 
     @Id
@@ -83,5 +83,14 @@ public class    User {
         this.password = password;
         this.profileImage = profileImage;
     }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String name) {
+        this.userName = name;
+    }
+
 
 }

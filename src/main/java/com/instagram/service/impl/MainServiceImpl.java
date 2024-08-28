@@ -103,6 +103,7 @@ public class MainServiceImpl implements MainService {
     // Main Entity를 MainDto로 매핑하면서 댓글도 포함
     private MainDto mapToMainDtoWithComments(Main main) {
         MainDto mainDto = mainMapper.toDto(main);
+        mainDto.setUserId(main.getUserId()); // userId 설정 확인 보성 0614추가
 
         // Main에 연결된 댓글들을 가져와서 DTO로 변환
         List<CommentDto> comments = commentRepository.findByMainId(main.getId())

@@ -45,15 +45,24 @@ spring:
     consumer:
       group-id: chat-group
       auto-offset-reset: earliest
+      max-poll-interval-ms: 600000  # 최대 poll 간격을 10분으로 설정
+      max-poll-records: 500  # poll 당 최대 레코드 수를 500으로 설정
+      session-timeout-ms: 60000  # 60초
+      heartbeat-interval-ms: 20000  # 20초
+
+
+      properties:
+        group.initial.rebalance.delay.ms: 0  # 리밸런스 딜레이를 0으로 설정
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
   datasource:
     url: jdbc:mariadb://${DB_HOST:127.0.0.1}:${DB_PORT:3306}/${DB_DATABASE:boot_db}
-    username: boot  # root 사용자로 접속
-    password: boot  # 새로 설정한 root 사용자 비밀번호
+    username: ${DB_USERNAME:boot}  # boot 사용자로 접속
+    password: ${DB_PASSWORD:boot}  # boot 사용자의 비밀번호
     driver-class-name: org.mariadb.jdbc.Driver
+
 
   jpa:
     properties:
@@ -71,3 +80,4 @@ spring:
       password: boot
       baseline-on-migrate: true
 
+# JWT 관련 설정

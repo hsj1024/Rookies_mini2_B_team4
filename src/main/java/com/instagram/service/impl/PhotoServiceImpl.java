@@ -42,18 +42,15 @@ public class PhotoServiceImpl implements PhotoService {
 
             // Photo 엔티티 생성 및 저장
             Photo photo = new Photo();
-//            photo.setUserId(userId);
-//            photo.setImageUrl(filePath.toString());
-//            photo.setCaption(caption);
             // User 찾기
             User user = userRepository.findByUserId(userId)
                     .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-            photo.setUserId(user);
 
+            photo.setUserId(user);
             photo.setImageUrl(filePath.toString());
             photo.setCaption(caption);
 
-            // Main과 연결
+            // Main 찾기
             Main main = mainRepository.findById(mainId)
                     .orElseThrow(() -> new RuntimeException("Main post not found with id: " + mainId));
             photo.setMain(main);
@@ -70,7 +67,6 @@ public class PhotoServiceImpl implements PhotoService {
     private PhotoDto toDto(Photo photo) {
         PhotoDto dto = new PhotoDto();
         dto.setId(photo.getId());
-//        dto.setUserId(photo.getUserId());
         dto.setUserId(photo.getUserId().getId().toString());
         dto.setImageUrl(photo.getImageUrl());
         dto.setCaption(photo.getCaption());

@@ -18,4 +18,11 @@ public class UserDto {
     private String email;
     private String profileImage;
 
+    // 생성자 추가
+    public UserDto(Long id, String userName, String email) {
+        this.id = id;
+        this.userName = userName;
+        this.email = email;
+    }
+
 }

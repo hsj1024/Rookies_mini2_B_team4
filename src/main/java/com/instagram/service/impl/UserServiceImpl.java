@@ -25,10 +25,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -154,10 +151,37 @@ public class UserServiceImpl implements UserService {
                 )
                 .collect(Collectors.toSet());
     }
-    public Optional<User> findUserById(Long id) {
-        return userRepository.findById(id);
+//    public Optional<User> findUserById(Long id) {
+//        return userRepository.findById(id);
+//    }
+    @Override
+    public UserDto findUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 필요한 경우 User 엔티티를 UserDto로 변환
+        return new UserDto(user.getId(), user.getUserName(), user.getEmail());
     }
 
+//    @Override
+//    public Set<User> findUsersByIds(Set<Long> ids) {
+//        return ids.stream()
+//                .map(this::findUserById)
+//                .map(this::convertToUserEntity) // UserDto를 User로 변환
+//                .collect(Collectors.toSet());
+//    }
+
+    public Set<User> findUsersByIds(Set<Long> userIds) {
+        return new HashSet<>(userRepository.findAllById(userIds));
+    }
+    private User convertToUserEntity(UserDto userDto) {
+        // UserDto를 User 엔티티로 변환하는 로직 구현
+        User user = new User();
+        user.setId(userDto.getId());
+        user.setUserName(userDto.getUserName());
+        // 다른 필드들 설정
+        return user;
+    }
     @Override
     public UserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
         User user = userRepository.findByUserId(userId)

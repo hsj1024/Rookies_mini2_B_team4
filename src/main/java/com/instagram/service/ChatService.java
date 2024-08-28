@@ -187,11 +187,26 @@ public class ChatService {
     @Transactional
     public ChatRoom createChatRoom(String name, Set<User> users) {
         ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setName(name);
+        chatRoom.setUserName(name);
         chatRoom.setUsers(users);
         return chatRoomRepository.save(chatRoom);
     }
 
+
+    //    @Transactional
+//    public void sendMessage(Long chatRoomId, User sender, String content) {
+//        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+//                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
+//
+//        ChatMessage message = new ChatMessage();
+//        message.setChatRoom(chatRoom);
+//        message.setSender(sender);
+//        message.setContent(content);
+//        message.setTimestamp(LocalDateTime.now());
+//
+//        kafkaTemplate.send("chat-topic", message);
+//        chatMessageRepository.save(message);
+//    }
     @Transactional
     public void sendMessage(Long chatRoomId, User sender, String content) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
@@ -203,9 +218,11 @@ public class ChatService {
         message.setContent(content);
         message.setTimestamp(LocalDateTime.now());
 
-        kafkaTemplate.send("chat-topic", message);
-        chatMessageRepository.save(message);
+        chatMessageRepository.save(message);  // 메시지를 chat_message 테이블에 저장
+        kafkaTemplate.send("chat-topic", message);  // 메시지를 Kafka로 전송
     }
+
+
 
     public List<ChatMessage> getMessages(Long chatRoomId) {
         return chatMessageRepository.findByChatRoomId(chatRoomId);
@@ -216,8 +233,9 @@ public class ChatService {
         messages.forEach(msg -> System.out.println(msg.getContent()));
     }
 
-    public List<ChatRoom> getChatRoomsForUser(String userId) {
-        // userId로 채팅방 목록을 가져오는 로직
+    public List<ChatRoom> getChatRoomsForUser(Long userId) {
         return chatRoomRepository.findByUserId(userId);
     }
+
+
 }
