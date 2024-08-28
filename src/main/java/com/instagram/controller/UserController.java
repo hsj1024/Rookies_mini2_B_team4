@@ -1,9 +1,7 @@
+// UserController
 package com.instagram.controller;
 
-import com.instagram.dto.FollowDto;
-import com.instagram.dto.MainDto;
-import com.instagram.dto.PhotoDto;
-import com.instagram.dto.UserDto;
+import com.instagram.dto.*;
 import com.instagram.entity.Photo;
 import com.instagram.entity.User;
 import com.instagram.exception.ResourceNotFoundException;

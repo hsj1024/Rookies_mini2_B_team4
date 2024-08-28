@@ -1,3 +1,4 @@
+// FollowRepository
 package com.instagram.repository;
 
 import com.instagram.entity.Follow;
@@ -28,6 +29,5 @@ public interface FollowRepository extends JpaRepository<Follow, User> {
     List<String> findFollowingIdsByFollowerId(@Param("followerId") String followerId);
 
 
-    boolean existsByFollowerIdAndFollowingId(Long followerId, Long followingId);
 
 }

@@ -1,3 +1,4 @@
+// UserService
 //package com.rookies_talk.service;
 //
 //import com.rookies_talk.entity.User;
@@ -58,11 +59,9 @@ public interface UserService {
 
     UserDto findUserById(Long id);
 
-    public Set<User> findUsersByIds(Set<String> userIds);
+    public Set<User> findUsersByIds(Set<Long> userIds);
 
 
-    // 채팅 구현 추가 - 서정
-    boolean areFollowing(String currentUserId, String otherUserId);
 
 
 
