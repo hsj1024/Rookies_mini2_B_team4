@@ -179,7 +179,7 @@ public class ChatService {
     @Autowired
     private ChatMessageRepository chatMessageRepository;
 
-//    @Autowired
+    //    @Autowired
 //    private KafkaTemplate<String, Object> kafkaTemplate;
     @Autowired
     private KafkaTemplate<String, ChatMessage> kafkaTemplate;

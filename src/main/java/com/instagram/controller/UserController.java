@@ -7,7 +7,6 @@ import com.instagram.entity.User;
 import com.instagram.exception.ResourceNotFoundException;
 import com.instagram.repository.UserRepository;
 import com.instagram.repository.PhotoRepository;
-import com.instagram.service.FollowService;
 import com.instagram.service.MainService;
 import com.instagram.service.UserService;
 import lombok.RequiredArgsConstructor;

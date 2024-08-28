@@ -4,8 +4,8 @@ import com.instagram.common.JwtUtils;
 import com.instagram.dto.CustomUserDetail;
 import com.instagram.dto.LoginRequest;
 import com.instagram.dto.LoginResponse;
-import com.instagram.service.UserService;
 import com.instagram.security.CustomUserDetailsService; // Import CustomUserDetailsService
+import com.instagram.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

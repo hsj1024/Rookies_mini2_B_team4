@@ -9,14 +9,20 @@ import com.instagram.repository.PhotoRepository;
 import com.instagram.repository.UserRepository;
 import com.instagram.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 
 
 @Service
@@ -72,5 +78,29 @@ public class PhotoServiceImpl implements PhotoService {
         dto.setCaption(photo.getCaption());
         dto.setCreatedAt(photo.getCreatedAt());
         return dto;
+    }
+
+    public ResponseEntity<Resource> getImage(String filename) {
+        try {
+            Path filePath = Paths.get(uploadDir).resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists()) {
+                // MIME 타입을 MediaType으로 변환
+                String contentType = Files.probeContentType(filePath);
+                MediaType mediaType = MediaType.parseMediaType(contentType);
+
+                return ResponseEntity.ok()
+                        .contentType(mediaType)
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + filename + "\"")
+                        .body(resource);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } catch (MalformedURLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

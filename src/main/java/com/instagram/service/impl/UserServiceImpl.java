@@ -1,4 +1,3 @@
-// UserServiceImpl
 package com.instagram.service.impl;
 
 import com.instagram.dto.FollowDto;

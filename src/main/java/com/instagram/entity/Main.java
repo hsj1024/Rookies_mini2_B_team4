@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,5 +39,5 @@ public class Main {
     private List<Comment> text;
 
     @OneToMany(mappedBy = "main", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Photo> photos;
+    private List<Photo> photos = new ArrayList<>(); //뒤에 new arraylist 이미지 업로드 기능구현 추가 1500보성
 }

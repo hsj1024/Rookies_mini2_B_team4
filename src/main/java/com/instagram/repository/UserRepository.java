@@ -16,7 +16,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 //public interface UserRepository extends JpaRepository<User, String> {
 //    Optional<User> findByUserId(String userId);  // userId로 User를 조회하는 메서드
@@ -32,8 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {  // Long 타
     //User findByUserName(String userName);
 
     // 채팅 기능 위해 추가 - 서정
-    List<User> findByUserIdIn(Set<String> userIds);
-
+    List<User> findFriendsById(Long userId); // 특정 사용자 ID의 친구 목록 조회
 
     // userId, Email boolean 추가 - 윤선
     boolean existsByUserId(String userId);
