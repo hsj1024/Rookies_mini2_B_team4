@@ -58,9 +58,11 @@ public interface UserService {
 
     UserDto findUserById(Long id);
 
-    public Set<User> findUsersByIds(Set<Long> userIds);
+    public Set<User> findUsersByIds(Set<String> userIds);
 
 
+    // 채팅 구현 추가 - 서정
+    boolean areFollowing(String currentUserId, String otherUserId);
 
 
 

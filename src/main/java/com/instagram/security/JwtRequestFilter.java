@@ -95,6 +95,8 @@ import com.instagram.dto.CustomUserDetail;
 import com.instagram.entity.User;
 import com.instagram.exception.ResourceNotFoundException;
 import com.instagram.repository.UserRepository;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -180,6 +182,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
 		filterChain.doFilter(request, response);
 	}
+
+	public String getSubjectFromToken(String token) {
+		try {
+			return Jwts.parserBuilder()
+					.setSigningKey(hmacKey)
+					.build()
+					.parseClaimsJws(token)
+					.getBody()
+					.getSubject();
+		} catch (JwtException e) {
+			log.error("Failed to extract subject from token: {}", e.getMessage());
+			throw new RuntimeException("Failed to extract subject from token", e);
+		}
+	}
+
 }
 
 //

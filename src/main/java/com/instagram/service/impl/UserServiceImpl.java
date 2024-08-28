@@ -171,22 +171,30 @@ public class UserServiceImpl implements UserService {
 //                .collect(Collectors.toSet());
 //    }
 
-    public Set<User> findUsersByIds(Set<Long> userIds) {
-        return new HashSet<>(userRepository.findAllById(userIds));
+    @Transactional(readOnly = true)
+    public Set<User> findUsersByIds(Set<String> userIds) {
+        // UserRepository의 새로운 메서드를 사용하여 사용자 목록을 조회
+        return new HashSet<>(userRepository.findByUserIdIn(userIds));
     }
-    private User convertToUserEntity(UserDto userDto) {
-        // UserDto를 User 엔티티로 변환하는 로직 구현
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setUserName(userDto.getUserName());
-        // 다른 필드들 설정
-        return user;
-    }
+
     @Override
     public UserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with userId: " + userId));
 
         return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), new ArrayList<>());
+    }
+
+    // 채팅 구현 추가 - 서정
+    @Override
+    public boolean areFollowing(String currentUserId, String otherUserId) {
+        User currentUser = userRepository.findByUserId(currentUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with userId: " + currentUserId));
+
+        User otherUser = userRepository.findByUserId(otherUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with userId: " + otherUserId));
+
+        // 현재 사용자가 다른 사용자를 팔로우하고 있는지 확인
+        return followRepository.existsByFollowerIdAndFollowingId(currentUser.getId(), otherUser.getId());
     }
 }

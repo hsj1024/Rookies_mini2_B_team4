@@ -129,12 +129,18 @@ public class UserController {
     }
 
     @GetMapping("/photos/{id}")
-    public ResponseEntity<List<byte[]>> getPhotosByUserId(@PathVariable Long id) {
+    public ResponseEntity<ThumbnailDto> getPhotosByUserId(@PathVariable Long id) {
+
         User user = userRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User is not exists with a given id: " + id)
                 );
-        List<Photo> photos = photoRepository.findByUserId(user);
+        List<Photo> photos = photoRepository.findFirstPhotosByUserId(id);
+        List<Long> mainId = photos.stream()
+                .map(photo -> photo.getMain().getId())
+                .distinct() // Ensure unique mainIds
+                .collect(Collectors.toList());
+
         if (photos.isEmpty()) return null;
 
         List<byte[]> photoBytesList = new ArrayList<>();
@@ -150,7 +156,8 @@ public class UserController {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error reading image file", e);
             }
         }
-        return ResponseEntity.ok(photoBytesList);
+        ThumbnailDto thumbnailDto = new ThumbnailDto(mainId,photoBytesList);
+        return ResponseEntity.ok(thumbnailDto);
 
     }
 

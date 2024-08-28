@@ -358,10 +358,31 @@ public class ChatController {
 
     // 채팅방 생성 API 추가
     @PostMapping("/room")
-    public ChatRoom createRoom(@RequestBody CreateChatRoomRequest request) {
-        Set<User> users = userService.findUsersByIds(request.getUsers()); // Set<String> 타입의 userIds 사용
-        return chatService.createChatRoom(request.getName(), users);
+    public ResponseEntity<ChatRoom> createRoom(@RequestBody CreateChatRoomRequest request) {
+        // Authentication 객체를 통해 현재 사용자의 인증 정보를 가져옴
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // 인증 정보에서 사용자 ID를 가져옴 (여기서 getName()은 기본적으로 인증된 사용자의 ID를 반환)
+        String currentUserId = authentication.getName(); // JWT 토큰에서 사용자 ID를 추출
+
+        // 요청된 사용자 ID 목록 (Set<String>)
+        Set<String> userIds = request.getUsers();
+
+        // 예를 들어 첫 번째 사용자를 가져와 다른 사용자 ID로 설정
+        String otherUserId = userIds.iterator().next();
+
+        // 현재 사용자가 다른 사용자를 팔로우하고 있는지 확인하는 로직
+        if (userService.areFollowing(currentUserId, otherUserId)) {
+            Set<User> users = userService.findUsersByIds(userIds);
+            ChatRoom chatRoom = chatService.createChatRoom(request.getName(), users);
+            return ResponseEntity.ok(chatRoom);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
     }
+
+
+
 
 
 }

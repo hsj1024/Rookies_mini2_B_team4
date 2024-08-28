@@ -20,24 +20,33 @@ import java.util.Date;
 public class JwtUtils {
 
 	private final Key hmacKey;
-	private final Long expirationTime;
+	//private final Long expirationTime;
+
+//	public JwtUtils(Environment env) {
+//		String secret = env.getProperty("token.secret");
+//		String expiration = env.getProperty("token.expiration-time");
+//
+//		// 디버깅 로그 추가
+//		log.info("Loaded token.secret: {}", secret);
+//		log.info("Loaded token.expiration-time: {}", expiration);
+//
+//		if (secret == null || expiration == null) {
+//			throw new IllegalArgumentException("Token secret or expiration time is not set in the environment properties");
+//		}
+//
+//		this.hmacKey = Keys.hmacShaKeyFor(secret.getBytes());
+//		this.expirationTime = Long.parseLong(expiration);
+//	}
 
 	public JwtUtils(Environment env) {
 		String secret = env.getProperty("token.secret");
-		String expiration = env.getProperty("token.expiration-time");
 
-		// 디버깅 로그 추가
-		log.info("Loaded token.secret: {}", secret);
-		log.info("Loaded token.expiration-time: {}", expiration);
-
-		if (secret == null || expiration == null) {
-			throw new IllegalArgumentException("Token secret or expiration time is not set in the environment properties");
+		if (secret == null) {
+			throw new IllegalArgumentException("Token secret is not set in the environment properties");
 		}
 
 		this.hmacKey = Keys.hmacShaKeyFor(secret.getBytes());
-		this.expirationTime = Long.parseLong(expiration);
 	}
-
 	public String generateToken(String userId) {
 		Instant now = Instant.now();
 		String jwtToken = Jwts.builder()
@@ -46,7 +55,7 @@ public class JwtUtils {
 				.setSubject(userId)
 				//.setId(String.valueOf(user.getId()))
 				.setIssuedAt(Date.from(now))
-				.setExpiration(Date.from(now.plusMillis(expirationTime)))
+				//.setExpiration(Date.from(now.plusMillis(expirationTime)))
 				.signWith(hmacKey) // SignatureAlgorithm을 제거하고 Key만 사용
 				.compact();
 
