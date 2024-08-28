@@ -4,9 +4,11 @@ import com.instagram.dto.FollowDto;
 import com.instagram.dto.MainDto;
 import com.instagram.dto.PhotoDto;
 import com.instagram.dto.UserDto;
+import com.instagram.entity.Photo;
 import com.instagram.entity.User;
 import com.instagram.exception.ResourceNotFoundException;
 import com.instagram.repository.UserRepository;
+import com.instagram.repository.PhotoRepository;
 import com.instagram.service.FollowService;
 import com.instagram.service.MainService;
 import com.instagram.service.UserService;
@@ -17,10 +19,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +36,7 @@ public class UserController {
     private final UserService userService;
     private final MainService mainService;  // MainService 추가
 
-
+    private final PhotoRepository photoRepository;
     private final UserRepository userRepository;
 
     @GetMapping("/{id}")
@@ -124,19 +128,30 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    // 사용자의 게시글 보여주기 위해 내 정보 가져오기 - 보성님 기능
-//    @GetMapping("/{userId}/posts")
-//    public ResponseEntity<List<MainDto>> getPostsByUserId(@PathVariable String userId) {
-//        try {
-//            List<MainDto> userPosts = mainService.getPostsByUserId(userId);
-//            return ResponseEntity.ok(userPosts);
-//        } catch (ResourceNotFoundException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Return 404 if not found
-//        } catch (Exception e) {
-//            // Log the error for debugging
-//            System.out.println("An error occurred: " + e.getMessage());
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Return 500 for other errors
-//        }
-//    }
+    @GetMapping("/photos/{id}")
+    public ResponseEntity<List<byte[]>> getPhotosByUserId(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User is not exists with a given id: " + id)
+                );
+        List<Photo> photos = photoRepository.findByUserId(user);
+        if (photos.isEmpty()) return null;
+
+        List<byte[]> photoBytesList = new ArrayList<>();
+
+        for (Photo photo : photos) {
+            try {
+                Path imagePath = Paths.get(photo.getImageUrl());
+
+                byte[] imageBytes = Files.readAllBytes(imagePath);
+
+                photoBytesList.add(imageBytes);
+            } catch (IOException e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error reading image file", e);
+            }
+        }
+        return ResponseEntity.ok(photoBytesList);
+
+    }
 
 }
