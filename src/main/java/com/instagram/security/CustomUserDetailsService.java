@@ -33,7 +33,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 		return new CustomUserDetail(users.get(0));
 	}
 
-
 	public UserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
 		// 유저를 데이터베이스에서 userId로 검색
 		User user = userRepository.findByUserId(userId)

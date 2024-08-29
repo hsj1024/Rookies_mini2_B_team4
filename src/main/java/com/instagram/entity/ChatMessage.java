@@ -42,11 +42,16 @@ public class ChatMessage {
 
     @ManyToOne
     @JoinColumn(name = "chat_room_id", nullable = false)  // Foreign key to ChatRoom
-    private ChatRoom chatRoom;
+    private ChatRoom chatRoom;  // ChatRoom 객체와 매핑되는 필드
 
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)  // Foreign key to User
     private User sender;
+
+    @ManyToOne
+    @JoinColumn(name = "recipient_id", nullable = false)  // Foreign key to User (receiver)
+    private User recipient;  // 새로 추가된 필드
+
 
     @Column(name = "content", nullable = false)
     private String content;
@@ -54,5 +59,5 @@ public class ChatMessage {
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp = LocalDateTime.now();
 
-    // 필요한 생성자나 메서드들을 추가할 수 있습니다.
+
 }

@@ -31,7 +31,7 @@ public class LoginController {
 	private CustomUserDetailsService customUserDetailsService;  // CustomUserDetailsService 주입
 
 
-//	@PostMapping("/login")
+	//	@PostMapping("/login")
 //	public LoginResponse login(@RequestBody LoginRequest loginRequest) {
 //		// userId를 기반으로 UserDetails를 가져옵니다.
 //		UserDetails userDetails = customUserDetailsService.loadUserByUserId(loginRequest.getUserId());

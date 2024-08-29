@@ -1,3 +1,32 @@
+//package com.instagram.config;
+//
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+//import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+//import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+//import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+//
+//@Configuration
+//@EnableWebSocketMessageBroker
+//public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+//
+//    @Override
+//
+//    public void configureMessageBroker(MessageBrokerRegistry config) {
+//        config.enableSimpleBroker("/topic");
+////                .setHeartbeatValue(new long[]{10000, 10000}); // 클라이언트와 서버 간 10초마다 heartbeat 체크
+//        config.setApplicationDestinationPrefixes("/app");
+//    }
+//
+//
+//    @Override
+//    public void registerStompEndpoints(StompEndpointRegistry registry) {
+//        registry.addEndpoint("/ws")
+//                .setAllowedOriginPatterns("http://localhost:[*]")  // 패턴을 사용하여 여러 포트를 허용
+//                .withSockJS();
+//    }
+//
+//}
 package com.instagram.config;
 
 import org.springframework.context.annotation.Configuration;
@@ -12,14 +41,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic"); // 메시지 브로커의 대화 주제
-        config.setApplicationDestinationPrefixes("/app"); // 클라이언트의 요청 주소 앞에 붙는 접두사
+        config.enableSimpleBroker("/topic");
+        config.setApplicationDestinationPrefixes("/app");
     }
+
+
+
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws") // WebSocket 엔드포인트
-                .setAllowedOrigins("http://localhost:3000") // 클라이언트 도메인 설정
-                .withSockJS(); // SockJS를 사용하여 WebSocket을 폴백 처리
+        registry.addEndpoint("/ws")
+                .setAllowedOriginPatterns("http://localhost:3000")  // allowedOriginPatterns를 사용하여 다양한 포트를 허용
+                .withSockJS();
     }
 }

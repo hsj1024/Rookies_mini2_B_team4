@@ -161,15 +161,27 @@ import com.instagram.entity.ChatRoom;
 import com.instagram.entity.User;
 import com.instagram.repository.ChatMessageRepository;
 import com.instagram.repository.ChatRoomRepository;
+import com.instagram.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+import com.instagram.exception.ResourceNotFoundException;
+
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-
+import java.util.stream.Collectors;
+@RequiredArgsConstructor
 @Service
 public class ChatService {
 
@@ -179,24 +191,77 @@ public class ChatService {
     @Autowired
     private ChatMessageRepository chatMessageRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     //    @Autowired
 //    private KafkaTemplate<String, Object> kafkaTemplate;
     @Autowired
     private KafkaTemplate<String, ChatMessage> kafkaTemplate;
 
-    @Transactional
-    public ChatRoom createChatRoom(String name, Set<User> users) {
+
+
+
+
+
+//    @Transactional
+//    public ChatRoom createChatRoom(String name, Set<User> users) {
+//        // 사용자들이 존재하는지 확인
+//        for (User user : users) {
+//            if (!userRepository.existsById(user.getId())) {
+//                throw new RuntimeException("User with ID " + user.getId() + " does not exist");
+//            }
+//        }
+//
+//        // 사용자 수가 2명인지 확인
+//        if (users.size() != 2) {
+//            throw new IllegalArgumentException("Exactly 2 users are required to create a chat room.");
+//        }
+//
+//        ChatRoom chatRoom = new ChatRoom();
+//        chatRoom.setRoomName(name);
+//        chatRoom.setUsers(users);
+//        return chatRoomRepository.save(chatRoom);
+//
+//    }
+
+    public ChatRoom createChatRoom(String roomName, Set<User> users) {
+
+        // 사용자 ID 집합으로 변환
+        Set<Long> userIds = users.stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+
+        // 동일한 사용자들이 이미 존재하는 채팅방을 찾습니다.
+        Optional<ChatRoom> existingRoom = chatRoomRepository.findByUserIds(userIds, userIds.size());
+        if (existingRoom.isPresent()) {
+            return existingRoom.get(); // 기존 채팅방 반환
+        }
+        // 기존 채팅방이 없으면 새로운 채팅방 생성
         ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setUserName(name);
+        chatRoom.setRoomName(roomName);
         chatRoom.setUsers(users);
         return chatRoomRepository.save(chatRoom);
     }
+    public ChatRoom createChatRoomForUsers(Set<User> users) {
+        String roomName = users.stream()
+                .map(User::getId)
+                .map(String::valueOf)
+                .reduce((id1, id2) -> id1 + "," + id2)
+                .orElse("Unnamed Room");
+
+        return createChatRoom(roomName, users);
+    }
 
 
-    //    @Transactional
+//    @Transactional
 //    public void sendMessage(Long chatRoomId, User sender, String content) {
 //        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-//                .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
+//                .orElseThrow(() -> new ResourceNotFoundException("ChatRoom not found"));
+//
+//        if (sender == null) {
+//            throw new ResourceNotFoundException("Sender not found");
+//        }
 //
 //        ChatMessage message = new ChatMessage();
 //        message.setChatRoom(chatRoom);
@@ -204,37 +269,49 @@ public class ChatService {
 //        message.setContent(content);
 //        message.setTimestamp(LocalDateTime.now());
 //
-//        kafkaTemplate.send("chat-topic", message);
 //        chatMessageRepository.save(message);
+//        kafkaTemplate.send("chat-topic", message);
 //    }
-    @Transactional
-    public void sendMessage(Long chatRoomId, User sender, String content) {
+
+
+
+
+
+    public List<ChatMessage> getMessages(Long chatRoomId, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        return chatMessageRepository.findByChatRoomId(chatRoomId, pageable).getContent();
+    }
+
+
+
+
+
+    public void printMessages(Long chatRoomId) {
+        // ChatRoom 존재 여부 확인
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("ChatRoom not found"));
 
-        ChatMessage message = new ChatMessage();
-        message.setChatRoom(chatRoom);
-        message.setSender(sender);
-        message.setContent(content);
-        message.setTimestamp(LocalDateTime.now());
-
-        chatMessageRepository.save(message);  // 메시지를 chat_message 테이블에 저장
-        kafkaTemplate.send("chat-topic", message);  // 메시지를 Kafka로 전송
-    }
-
-
-
-    public List<ChatMessage> getMessages(Long chatRoomId) {
-        return chatMessageRepository.findByChatRoomId(chatRoomId);
-    }
-
-    public void printMessages(Long chatRoomId) {
+        // ChatRoom에 해당하는 메시지 가져오기
         List<ChatMessage> messages = chatMessageRepository.findByChatRoomId(chatRoomId);
-        messages.forEach(msg -> System.out.println(msg.getContent()));
+
+        // 메시지 리스트가 비어있는지 확인
+        if (messages.isEmpty()) {
+            System.out.println("No messages found in chat room ID: " + chatRoomId);
+        } else {
+            messages.forEach(msg -> {
+                if (msg == null) {
+                    System.out.println("Null message encountered!");
+                } else {
+                    System.out.println("Message: " + msg.getContent() + " from user: " + msg.getSender().getUserName());
+                }
+            });
+        }
     }
 
-    public List<ChatRoom> getChatRoomsForUser(Long userId) {
-        return chatRoomRepository.findByUserId(userId);
+
+
+    public Page<ChatRoom> getChatRoomsForUser(Long userId, Pageable pageable) {
+        return chatRoomRepository.findChatRoomsByUserId(userId, pageable);
     }
 
 

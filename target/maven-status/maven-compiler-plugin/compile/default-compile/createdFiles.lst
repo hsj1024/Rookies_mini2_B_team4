@@ -8,6 +8,7 @@ com/instagram/entity/ChatMessage.class
 com/instagram/service/JoinService.class
 com/instagram/dto/mapper/JoinMapper.class
 com/instagram/entity/User.class
+com/instagram/exception/advice/GlobalExceptionHandler.class
 com/instagram/controller/LogoutController.class
 com/instagram/service/impl/JoinServiceImpl.class
 com/instagram/dto/mapper/UserMapper.class
@@ -28,6 +29,7 @@ com/instagram/dto/mapper/CommentMapper.class
 com/instagram/repository/MainRepository.class
 com/instagram/service/UserService.class
 com/instagram/common/JwtUtils.class
+com/instagram/dto/ChatMessageDTO.class
 com/instagram/repository/ChatMessageRepository.class
 com/instagram/kafka/KafkaConfig.class
 com/instagram/controller/MainController.class
@@ -43,7 +45,6 @@ com/instagram/entity/Follow.class
 com/instagram/entity/Comment.class
 com/instagram/service/impl/PhotoServiceImpl.class
 com/instagram/controller/PhotoController.class
-com/instagram/security/CustomAuthenticationSuccessHandler.class
 com/instagram/repository/CommentRepository.class
 com/instagram/service/impl/MainServiceImpl.class
 com/instagram/dto/CustomUserDetail$1.class
@@ -54,14 +55,18 @@ com/instagram/entity/ChatRoom.class
 com/instagram/exception/ResourceNotFoundException.class
 com/instagram/service/CommentService.class
 com/instagram/service/ChatService.class
+com/instagram/exception/UnauthorizedException.class
 com/instagram/dto/mapper/MainMapper.class
+com/instagram/security/CustomUserDetailsService.class
 com/instagram/security/JwtRequestFilter.class
 com/instagram/controller/CommentController.class
+com/instagram/dto/ThumbnailDto.class
 com/instagram/entity/Photo.class
 com/instagram/service/FollowService.class
+com/instagram/dto/LoginRequest.class
 com/instagram/dto/PhotoDto.class
+com/instagram/dto/LoginResponse.class
 com/instagram/repository/PhotoRepository.class
 com/instagram/repository/ChatRoomRepository.class
 com/instagram/service/MainService.class
-com/instagram/controller/ChatController$MessageRequest.class
 com/instagram/runner/UserFollowInsertRunner.class

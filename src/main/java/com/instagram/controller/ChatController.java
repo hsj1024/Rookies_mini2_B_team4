@@ -1,299 +1,20 @@
-////package com.rookies_talk.controller;
-////
-////import com.rookies_talk.dto.CreateChatRoomRequest;
-////import com.rookies_talk.entity.ChatMessage;
-////import com.rookies_talk.entity.ChatRoom;
-////import com.rookies_talk.entity.User;
-////import com.rookies_talk.service.ChatService;
-////import com.rookies_talk.service.UserService;
-////import org.springframework.beans.factory.annotation.Autowired;
-////import org.springframework.web.bind.annotation.*;
-////
-////import java.util.List;
-////import java.util.Set;
-////
-////@RestController
-////@RequestMapping("/api/chat")
-////public class ChatController {
-////
-////    @Autowired
-////    private ChatService chatService;
-////
-////    @Autowired
-////    private UserService userService;
-////
-////    @PostMapping("/room")
-////    public ChatRoom createRoom(@RequestBody CreateChatRoomRequest request) {
-////        // CreateChatRoomRequest에서 users 필드는 사용자 ID(Set<Long>)이므로,
-////        // UserService 또는 UserRepository를 사용하여 User 엔티티들을 조회한 후, ChatRoom을 생성해야 합니다.
-////        Set<User> users = userService.findUsersByIds(request.getUsers());
-////        return chatService.createChatRoom(request.getName(), users);
-////    }
-////
-////
-////    //    @PostMapping("/send")
-//////    public void sendMessage(@RequestParam Long chatRoomId,
-//////                            @RequestParam Long senderId,
-//////                            @RequestBody String content) {
-//////
-////////        User sender = userService.findUserById(senderId); // 실제로 데이터베이스에서 사용자 정보를 가져오는 로직
-////////        chatService.sendMessage(chatRoomId, sender, content);
-//////        User sender = new User();
-//////        sender.setId(senderId);
-//////        chatService.sendMessage(chatRoomId, sender, content);
-//////    }
-////    @PostMapping("/send")
-////    public void sendMessage(@RequestBody MessageRequest request) {
-////        User sender = new User();
-////        sender.setId(request.getSenderId());
-////        chatService.sendMessage(request.getChatRoomId(), sender, request.getContent());
-////    }
-////    @GetMapping("/messages/{chatRoomId}")
-////    public List<ChatMessage> getMessages(@PathVariable Long chatRoomId) {
-////        List<ChatMessage> messages = chatService.getMessages(chatRoomId);
-////        messages.forEach(msg -> System.out.println(msg.getContent()));  // 메시지 내용 로그로 출력
-////        return messages;
-////    }
-////
-////    @GetMapping("/printMessages/{chatRoomId}")
-////    public void printMessages(@PathVariable Long chatRoomId) {
-////        chatService.printMessages(chatRoomId);
-////    }
-////
-////    public static class MessageRequest {
-////        private Long chatRoomId;
-////        private Long senderId;
-////        private String content;
-////
-////        // Getters and Setters
-////        public Long getChatRoomId() {
-////            return chatRoomId;
-////        }
-////
-////        public void setChatRoomId(Long chatRoomId) {
-////            this.chatRoomId = chatRoomId;
-////        }
-////
-////        public Long getSenderId() {
-////            return senderId;
-////        }
-////
-////        public void setSenderId(Long senderId) {
-////            this.senderId = senderId;
-////        }
-////
-////        public String getContent() {
-////            return content;
-////        }
-////
-////        public void setContent(String content) {
-////            this.content = content;
-////        }
-////    }
-////}
-//package com.instagram.controller;
-//
-//import com.instagram.dto.CreateChatRoomRequest;
-//import com.instagram.entity.ChatMessage;
-//import com.instagram.entity.ChatRoom;
-//import com.instagram.entity.User;
-//import com.instagram.service.ChatService;
-//import com.instagram.service.UserService;
-//import com.instagram.service.impl.UserServiceImpl;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.messaging.handler.annotation.MessageMapping;
-//import org.springframework.messaging.handler.annotation.SendTo;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.List;
-//import java.util.Set;
-//import java.util.stream.Collectors;
-//
-//@RestController
-//@RequestMapping("/api/chat")
-//public class ChatController {
-//
-//    @Autowired
-//    private ChatService chatService;
-//
-//    @Autowired
-//    private UserServiceImpl userServiceImpl;
-//
-//    @PostMapping("/room")
-//    public ChatRoom createRoom(@RequestBody CreateChatRoomRequest request) {
-//        // Set<Long>을 Set<String>으로 변환
-//        Set<String> userIds = request.getUsers().stream()
-//                .map(String::valueOf)
-//                .collect(Collectors.toSet());
-//
-//        Set<User> users = userServiceImpl.findUsersByStringIds(userIds);
-//
-//        return chatService.createChatRoom(request.getName(), users);
-//    }
-//
-////    @PostMapping("/send")
-////    public void sendMessage(@RequestBody MessageRequest request) {
-////        User sender = userService.findUserById(request.getSenderId());
-////        chatService.sendMessage(request.getChatRoomId(), sender, request.getContent());
-////    }
-//    @MessageMapping("/chat.sendMessage")
-//    @SendTo("/topic/messages")
-//    public ChatMessage sendMessage(ChatMessage message) {
-//        return message; // 받은 메시지를 그대로 반환하여 모든 구독자에게 전송
-//    }
-//
-//    @GetMapping("/messages/{chatRoomId}")
-//    public List<ChatMessage> getMessages(@PathVariable Long chatRoomId) {
-//        return chatService.getMessages(chatRoomId);
-//    }
-//
-//    @GetMapping("/printMessages/{chatRoomId}")
-//    public void printMessages(@PathVariable Long chatRoomId) {
-//        chatService.printMessages(chatRoomId);
-//    }
-//
-//
-//
-//    public static class MessageRequest {
-//        private Long chatRoomId;
-//        private Long senderId;
-//        private String content;
-//
-//        // Getters and Setters
-//        public Long getChatRoomId() {
-//            return chatRoomId;
-//        }
-//
-//        public void setChatRoomId(Long chatRoomId) {
-//            this.chatRoomId = chatRoomId;
-//        }
-//
-//        public Long getSenderId() {
-//            return senderId;
-//        }
-//
-//        public void setSenderId(Long senderId) {
-//            this.senderId = senderId;
-//        }
-//
-//        public String getContent() {
-//            return content;
-//        }
-//
-//        public void setContent(String content) {
-//            this.content = content;
-//        }
-//    }
-//}
-
-
-// 2번쨰
 package com.instagram.controller;
 
-//import com.instagram.dto.CustomUserDetail;
-//import com.instagram.service.UserService;
-//import org.springframework.security.core.Authentication;
-//import com.instagram.entity.User;
-//
-//import com.instagram.entity.ChatMessage;
-//import com.instagram.entity.ChatRoom;
-//import com.instagram.service.ChatService;
-//import org.springframework.kafka.annotation.KafkaListener;
-//import org.springframework.kafka.core.KafkaTemplate;
-//import org.springframework.kafka.support.KafkaHeaders;
-//import org.springframework.messaging.handler.annotation.Header;
-//import org.springframework.messaging.handler.annotation.MessageMapping;
-//import org.springframework.messaging.simp.SimpMessagingTemplate;
-//import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//import java.util.List;
-//
-//@RestController // 채팅방 목록을 반환하기 위해 RestController로 변경
-//@RequestMapping("/api/chat")
-//public class ChatController {
-//
-//    private final KafkaTemplate<String, ChatMessage> kafkaTemplate;
-//    private final SimpMessagingTemplate messagingTemplate;
-//    private final ChatService chatService; // ChatService를 통해 채팅방 목록을 가져옴
-//
-//
-//
-//    public ChatController(KafkaTemplate<String, ChatMessage> kafkaTemplate, SimpMessagingTemplate messagingTemplate, ChatService chatService) {
-//        this.kafkaTemplate = kafkaTemplate;
-//        this.messagingTemplate = messagingTemplate;
-//        this.chatService = chatService;
-//    }
-//
-//    @MessageMapping("/chat.sendMessage")
-//    public void sendMessage(@RequestBody ChatMessage message) {
-//        String topic = "chat-room-" + message.getChatRoom().getId();
-//        kafkaTemplate.send(topic, message);
-//    }
-//
-//    @KafkaListener(topicPattern = "chat-room-*", groupId = "chat_group")
-//    public void receiveMessage(ChatMessage message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
-//        String destination = "/topic/messages/" + extractChatRoomIdFromTopic(topic);
-//        messagingTemplate.convertAndSend(destination, message);
-//    }
-//
-//    private String extractChatRoomIdFromTopic(String topic) {
-//        return topic.split("-")[2]; // "chat-room-1"에서 "1"을 추출
-//    }
-//
-//    // 채팅방 목록을 가져오는 API 추가
-////    @GetMapping("/rooms")
-////    public List<ChatRoom> getUserChatRooms(Authentication authentication) {
-////        String userId = ((User) authentication.getPrincipal()).getUserId();
-////        return chatService.getChatRoomsForUser(userId);
-////    }
-////    @GetMapping("/rooms")
-////    public List<ChatRoom> getUserChatRooms(Authentication authentication) {
-////        // Authentication 객체에서 올바르게 Principal을 가져오기
-////        User user = (User) authentication.getPrincipal(); // Principal에서 User 객체를 가져옴
-////        String userId = user.getUserId(); // User 객체에서 userId를 가져옴
-////
-////        return chatService.getChatRoomsForUser(userId);
-////    }
-//    @GetMapping("/rooms")
-//    public List<ChatRoom> getUserChatRooms(Authentication authentication) {
-//        User user = (User) authentication.getPrincipal(); // Principal에서 User 객체를 가져옴
-//        Long userId = user.getId(); // User 객체에서 id를 가져옴 (Long 타입)
-//
-//        Object principal = authentication.getPrincipal();
-//        //System.out.println("Principal class!!: " + principal.getClass().getName());
-//
-//        return chatService.getChatRoomsForUser(userId);
-//    }
-//
-////    @GetMapping("/rooms")
-////    public List<ChatRoom> getUserChatRooms(Authentication authentication) {
-////        Object principal = authentication.getPrincipal();
-////        if (principal instanceof CustomUserDetail) {
-////            CustomUserDetail customUserDetail = (CustomUserDetail) principal;
-////            String userId = customUserDetail.getUserId();
-////            return chatService.getChatRoomsForUser(userId);
-////        } else {
-////            // 예외 처리: Principal이 예상한 타입이 아닌 경우
-////            throw new IllegalStateException("Unexpected principal type: " + principal.getClass());
-////        }
-////    }
-//
-//
-//
-//}
-//package com.instagram.controller;
-
 import com.instagram.dto.CreateChatRoomRequest;
+import com.instagram.dto.CustomUserDetail;
 import com.instagram.entity.ChatMessage;
 import com.instagram.entity.ChatRoom;
 import com.instagram.entity.User;
-import com.instagram.exception.UnauthorizedException;
+import com.instagram.repository.ChatMessageRepository;
+import com.instagram.repository.ChatRoomRepository;
+import com.instagram.repository.UserRepository;
+import com.instagram.security.CustomUserDetailsService;
 import com.instagram.service.ChatService;
 import com.instagram.service.UserService;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -306,12 +27,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.instagram.exception.ResourceNotFoundException;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+
 import java.util.stream.Collectors;
-//@CrossOrigin(origins = "http://localhost:3000") // 클라이언트의 도메인
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 @RestController // 채팅방 목록을 반환하기 위해 RestController로 변경
 @RequestMapping("/api/chat")
@@ -321,6 +43,15 @@ public class ChatController {
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
     private final UserService userService;
+    @Autowired
+    private ChatRoomRepository chatRoomRepository;
+    @Autowired
+    private UserRepository userRepository; // 필드 주입
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
+
+    @Autowired
+    private ChatMessageRepository chatMessageRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
@@ -332,15 +63,108 @@ public class ChatController {
         this.userService = userService;
     }
 
+
+//    @MessageMapping("/chat.sendMessage")
+//    public void sendMessage(@RequestBody ChatMessage message) {
+//        // 수신자 정보 설정
+//        Long recipientId = message.getRecipient().getId();  // 프론트엔드에서 전달된 recipientId를 사용
+//        User recipient = userRepository.findById(recipientId)
+//                .orElseThrow(() -> new ResourceNotFoundException("Recipient not found with ID: " + recipientId));
+//        message.setRecipient(recipient);
+//
+//        String topic = "chat-room-" + message.getChatRoom().getId();
+//
+//        // 메시지 저장
+//        chatMessageRepository.save(message);  // 메시지를 데이터베이스에 저장
+//
+//        kafkaTemplate.send(topic, message);  // 메시지를 Kafka를 통해 전달
+//    }
+
+//    @MessageMapping("/chat.sendMessage")
+//    public void sendMessage(@RequestBody ChatMessage message) {
+//        // 수신자 정보 설정
+//        if (message.getRecipient() == null) {
+//            Long recipientId = message.getRecipient().getId();
+//            User recipient = userRepository.findById(recipientId)
+//                    .orElseThrow(() -> new ResourceNotFoundException("Recipient not found with ID: " + recipientId));
+//            message.setRecipient(recipient);
+//        }
+//
+//        String topic = "chat-room-" + message.getChatRoom().getId();
+//
+//        // 메시지 저장
+//        chatMessageRepository.save(message);  // 메시지를 데이터베이스에 저장
+//
+//        kafkaTemplate.send("chat-topic", message);  // 메시지를 Kafka를 통해 전달
+//    }
+
+
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(@RequestBody ChatMessage message) {
+        logger.info("Received message: {}", message);
+
+        // 로그 추가: 수신된 JSON 데이터 출력
+        logger.info("Raw received data:");
+        logger.info("chatRoomId: {}", message.getChatRoom() != null ? message.getChatRoom().getId() : "null");
+        logger.info("senderId: {}", message.getSender() != null ? message.getSender().getId() : "null");
+        logger.info("recipientId: {}", message.getRecipient() != null ? message.getRecipient().getId() : "null");
+        logger.info("content: {}", message.getContent());
+        logger.info("timestamp: {}", message.getTimestamp());
+
+        // ChatRoom 설정
+        if (message.getChatRoom() == null || message.getChatRoom().getId() == null) {
+            logger.error("ChatRoom is null. Cannot process the message.");
+            throw new IllegalArgumentException("ChatRoom must not be null");
+        }
+        ChatRoom chatRoom = chatRoomRepository.findById(message.getChatRoom().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("ChatRoom not found with ID: " + message.getChatRoom().getId()));
+        message.setChatRoom(chatRoom);
+
+        // Sender 설정
+        if (message.getSender() == null || message.getSender().getId() == null) {
+            logger.error("Sender is null. Cannot process the message.");
+            throw new IllegalArgumentException("Sender must not be null");
+        }
+        User sender = userRepository.findById(message.getSender().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Sender not found with ID: " + message.getSender().getId()));
+        message.setSender(sender);
+
+        // Recipient 설정
+        if (message.getRecipient() == null || message.getRecipient().getId() == null) {
+            logger.error("Recipient is null. Cannot process the message.");
+            throw new IllegalArgumentException("Recipient must not be null");
+        }
+        User recipient = userRepository.findById(message.getRecipient().getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Recipient not found with ID: " + message.getRecipient().getId()));
+        message.setRecipient(recipient);
+
+        logger.info("Recipient found: {}", recipient);
+
         String topic = "chat-room-" + message.getChatRoom().getId();
-        kafkaTemplate.send(topic, message);
+        logger.info("Sending message to topic: {}", topic);
+
+        // 메시지 저장
+        chatMessageRepository.save(message);  // 메시지를 데이터베이스에 저장
+        logger.info("Message saved to database: {}", message);
+
+        kafkaTemplate.send(topic, message);  // 메시지를 Kafka를 통해 전달
+        logger.info("Message sent to Kafka topic: {}", topic);
     }
+
+
+
 
     @KafkaListener(topicPattern = "chat-room-*", groupId = "chat_group")
     public void receiveMessage(ChatMessage message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+        logger.info("Received message from Kafka topic: {}", topic);
+
+        // 메시지를 데이터베이스에 저장
+        chatMessageRepository.save(message);
+        logger.info("Message saved to database: {}", message);
+
         String destination = "/topic/messages/" + extractChatRoomIdFromTopic(topic);
+        logger.info("Sending message to WebSocket destination: {}", destination);
+
         messagingTemplate.convertAndSend(destination, message);
     }
 
@@ -348,20 +172,129 @@ public class ChatController {
         return topic.split("-")[2]; // "chat-room-1"에서 "1"을 추출
     }
 
-    // 채팅방 목록을 가져오는 API 추가
+    // 채팅방 목록을 가져오는 API
     @GetMapping("/rooms")
-    public List<ChatRoom> getUserChatRooms(Authentication authentication) {
-        User user = (User) authentication.getPrincipal(); // Principal에서 User 객체를 가져옴
-        Long userId = user.getId(); // User 객체에서 id를 가져옴 (Long 타입)
-        return chatService.getChatRoomsForUser(userId);
-    }
+    public List<ChatRoom> getUserChatRooms(Authentication authentication,
+                                           @RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
+        CustomUserDetail customUserDetail = (CustomUserDetail) authentication.getPrincipal();
+        User user = customUserDetail.getUser();
+        Long userId = user.getId();
 
-    // 채팅방 생성 API 추가
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ChatRoom> chatRoomPage = chatService.getChatRoomsForUser(userId, pageable);
+
+        List<ChatRoom> chatRooms = chatRoomPage.getContent();
+
+        for (ChatRoom room : chatRooms) {
+            // 현재 사용자가 참여하고 있는 채팅방에서 다른 사용자(들)의 이름을 가져옵니다.
+            Set<User> users = room.getUsers();
+            User otherUser = users.stream()
+                    .filter(u -> !u.getId().equals(userId))
+                    .findFirst()
+                    .orElse(null);
+
+            if (otherUser != null) {
+                room.setRoomName(otherUser.getUserName()+ " 와의 채팅 ");
+            } else {
+                room.setRoomName("Chat Room " + room.getId());
+            }
+        }
+
+        // 디버깅을 위한 로그 추가
+        System.out.println("Fetched Chat Rooms: " + chatRooms);
+        return chatRooms;
+    }
     @PostMapping("/room")
     public ChatRoom createRoom(@RequestBody CreateChatRoomRequest request) {
-        Set<User> users = userService.findUsersByIds(request.getUsers()); // Set<String> 타입의 userIds 사용
-        return chatService.createChatRoom(request.getName(), users);
+        try {
+            // 사용자 ID로 User 객체를 가져오는 로직
+            Set<User> users = new HashSet<>();
+            for (Long userId : request.getUsers()) {
+                // id로 User 객체를 조회
+                User user = userRepository.findById(userId)
+                        .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+                users.add(user);
+            }
+
+            System.out.println("Users in the chat room:");
+            for (User user : users) {
+                System.out.println("User ID: " + user.getId() + ", Username: " + user.getUserName());
+            }
+            return chatService.createChatRoom(request.getName(), users);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error while creating chat room", e);
+        }
     }
 
+
+    // 채팅방의 메시지 목록을 가져오는 API (페이징 지원)
+//     @GetMapping("/messages/{chatRoomId}")
+//     public List<ChatMessage> getMessages(@PathVariable Long chatRoomId,
+//                                          @RequestParam Optional<Integer> page,
+//                                          @RequestParam Optional<Integer> size) {
+//         int pageNo = page.orElse(0); // 기본값으로 페이지 번호 0
+//         int pageSize = size.orElse(10); // 기본값으로 페이지 크기 10
+//         return chatService.getMessages(chatRoomId, pageNo, pageSize);
+//     }
+    @GetMapping("/messages/{chatRoomId}")
+    public List<ChatMessage> getMessages(@PathVariable Long chatRoomId,
+                                         @RequestParam Optional<Integer> page,
+                                         @RequestParam Optional<Integer> size) {
+        int pageNo = page.orElse(0); // 기본값으로 페이지 번호 0
+        int pageSize = size.orElse(10); // 기본값으로 페이지 크기 10
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+
+        // 특정 채팅방의 메시지 조회 (페이징 지원)
+        Page<ChatMessage> messagePage = chatMessageRepository.findByChatRoomId(chatRoomId, pageable);
+        return messagePage.getContent(); // 페이지에서 메시지 내용만 추출하여 반환
+    }
+
+
+    //    @GetMapping("/{chatRoomId}/recipient")
+//    public ResponseEntity<Map<String, Long>> getRecipientId(@PathVariable Long chatRoomId) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        //authentication.getPrincipal()을 CustomUserDetail로 캐스팅한 후 사용자 ID 가져오기
+//        CustomUserDetail currentUserDetail = (CustomUserDetail) authentication.getPrincipal();
+//        Long currentUserId = currentUserDetail.getUser().getId();
+//
+//        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+//                .orElseThrow(() -> new ResourceNotFoundException("ChatRoom not found for ID " + chatRoomId));
+//
+//        Long recipientId = chatRoom.getUsers().stream()
+//                .filter(users -> !users.getId().equals(currentUserId))
+//                .map(User::getId)
+//                .findFirst()
+//                .orElseThrow(() -> new ResourceNotFoundException("No other user found in chat room " + chatRoomId));
+//
+//        Map<String, Long> response = new HashMap<>();
+//        response.put("recipientId", recipientId);
+//        return ResponseEntity.ok(response);
+//    }
+    @GetMapping("/{chatRoomId}/recipient")
+    public ResponseEntity<Map<String, Long>> getRecipientId(@PathVariable Long chatRoomId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        // CustomUserDetail로 인증 객체를 캐스팅
+        CustomUserDetail currentUserDetail = (CustomUserDetail) authentication.getPrincipal();
+        Long currentUserId = currentUserDetail.getUser().getId();
+
+        // 채팅방을 찾고 수신자 ID를 결정
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new ResourceNotFoundException("ChatRoom not found for ID " + chatRoomId));
+
+        Long recipientId = chatRoom.getUsers().stream()
+                .filter(user -> !user.getId().equals(currentUserId))
+                .map(User::getId)
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("No other user found in chat room " + chatRoomId));
+
+        // 응답으로 수신자 ID 반환
+        Map<String, Long> response = new HashMap<>();
+        response.put("recipientId", recipientId);
+        return ResponseEntity.ok(response);
+    }
 
 }

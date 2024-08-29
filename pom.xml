@@ -85,7 +85,13 @@
 			<optional>true</optional>
 		</dependency>
 
-		<!-- JWT for Security -->
+		<!-- 서블릿 API 의존성 추가 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
 
 
 

@@ -51,7 +51,7 @@ public class SecurityConfiguration {
 				.csrf(csrf -> csrf.disable()) // REST API의 경우 CSRF 보호를 비활성화하는 것이 일반적
 
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/login", "/ws/**", "/api/main/write", "api/join/register").permitAll()
+						.requestMatchers("/api/login", "/ws/**", "/api/chat/**","/api/main/write", "api/join/register").permitAll()
 						.anyRequest().authenticated()
 				)
 				//.csrf(csrf -> csrf.disable()) // REST API의 경우 CSRF 보호를 비활성화하는 것이 일반적
