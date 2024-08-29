@@ -15,7 +15,8 @@ on:
     branches: [ "main" ]
 
 env:
-  DOCKER_IMAGE: hsj1024/rookies_talk_app:latest
+  DOCKER_IMAGE: rookies_talk_app
+  DOCKER_TAG: latest
 
 jobs:
   build:
