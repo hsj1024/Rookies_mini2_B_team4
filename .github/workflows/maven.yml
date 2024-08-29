@@ -1,0 +1,47 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Spring Boot & React App Deployment & Kafka
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  DOCKER_IMAGE: hsj1024/rookies_talk_app:latest
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with Maven hsj1024
+        run: |
+          cd  Rookies_mini2_B_team4
+          mvn clean package -Dmaven.test.skip=true
+
+      - name: Build & push Docker image
+        uses: mr-smithers-excellent/docker-build-push@v6
+        with:
+          image: ${{secrets.DOCKER_USERNAME}}/$DOCKER_IMAGE
+          tags: $DOCKER_TAG
+          registry: docker.io
+          dockerfile: Rookies_mini2_B_team4/Dockerfile  # Dockerfile 경로를 절대 경로로 지정
+          directory: Rookies_mini2_B_team4  # Docker 빌드 컨텍스트를 Rookies_mini2_B_team4 디렉토리로 지정
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
