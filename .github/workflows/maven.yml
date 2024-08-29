@@ -39,6 +39,6 @@ jobs:
           image: ${{secrets.DOCKER_USERNAME}}/$DOCKER_IMAGE
           tags: $DOCKER_TAG
           registry: docker.io
-          dockerfile: Dockerfile  # Dockerfile 경로를 절대 경로로 지정
+          dockerfile: ./Dockerfile  # Dockerfile 경로를 절대 경로로 지정
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
