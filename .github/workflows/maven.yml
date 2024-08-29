@@ -39,7 +39,6 @@ jobs:
           image: ${{secrets.DOCKER_USERNAME}}/$DOCKER_IMAGE
           tags: $DOCKER_TAG
           registry: docker.io
-          directory: Rookies_mini2_B_team4  # Docker 빌드 컨텍스트를 BackEnd_RestAPI 디렉토리로 지정
-          dockerfile: Rookies_mini2_B_team4/Dockerfile  # Dockerfile 경로를 절대 경로로 지정
+          dockerfile: Dockerfile  # Dockerfile 경로를 절대 경로로 지정
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
